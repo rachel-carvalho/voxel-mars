@@ -11,8 +11,9 @@ fs.createReadStream('./public/maps/mars.png').pipe(new PNG filterType: 4).on 'pa
   chunkSize = 32
 
   center = {x: heightmap.width / 2, y: heightmap.height / 2}
-  center = {x: 5044, y: 1528} # olympus mons
-  center = {x: 5974, y: 2180} # noctis labyrintus
+  olympus_mons = {x: 7319, y: 2443}
+  noctis_labyrinthus = {x: 8403, y: 3067}
+  center = olympus_mons
 
   app = express()
 

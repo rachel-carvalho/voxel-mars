@@ -53,8 +53,8 @@ window.addEventListener 'keydown', (ev) ->
       if div.style.zIndex is '-9999' then div.style.zIndex = '9999'
       else div.style.zIndex = '-9999' 
 
-      pointer.style.top = "#{((center.y + Math.floor pos.z) / 4096) * img.height}px"
-      pointer.style.left = "#{((center.x + Math.floor pos.x) / 8192) * img.width}px"
+      pointer.style.top = "#{((center.y + Math.floor pos.z) / 5760) * img.height}px"
+      pointer.style.left = "#{((center.x + Math.floor pos.x) / 11520) * img.width}px"
 
 game.voxels.on 'missingChunk', (chunkPosition) ->
   get "/map/#{chunkPosition[0]}/#{chunkPosition[2]}.json", (heightmap) ->
