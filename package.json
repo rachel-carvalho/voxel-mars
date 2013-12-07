@@ -1,0 +1,22 @@
+{
+  "name" : "voxel-mars",
+  "version" : "0.0.1",
+  "description" : "A voxel.js world generated from real Mars topography data",
+  "main" : "app.coffee",
+  "dependencies" : {
+    "domnode": "https://github.com/maxogden/domnode/tarball/master",
+    "voxel": "0.3.1",
+    "voxel-engine": "0.19.0",
+    "voxel-player": "0.1.0",
+    "voxel-walk": "0.0.5",
+    "pngjs": "0.4.0-alpha",
+    "express": "3.4.6",
+    "coffeeify": "0.5.1",
+    "browserify-middleware": "1.12.0"
+  },
+  "author" : {
+    "name" : "Rachel Carvalho",
+    "email" : "rachel.carvalho@gmail.com"
+  },
+  "license" : "MIT"
+}

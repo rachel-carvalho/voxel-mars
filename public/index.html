@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Voxel Mars</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+      html, body {margin: 0; padding: 0;}
+      #pointer {
+        position: absolute;
+        top: 0; left: 0;
+        width: 3px; height: 3px;
+        background-color: #f00;
+      }
+      #map {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%;
+        display: none;
+      }
+      #map img {width: 100%;}
+    </style>
+  </head>
+  <body>
+    <div id="map" style="z-index: -9999">
+      <div id="pointer"></div>
+      <img src="/maps/mars.png"/>
+    </div>
+    <script type="text/javascript" src="/js/index.js"></script>
+  </body>
+</html>
