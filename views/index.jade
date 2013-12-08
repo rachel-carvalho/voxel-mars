@@ -12,16 +12,14 @@ html(lang="en")
         background-color: #f00;
       }
       #mid-map {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%;
         display: none;
       }
       #mid-map img {width: 100%;}
+    script(src="/js/zepto-1.1.1.min.js")
     script.
       window.app = { map: !{json(map, { except: 'data' })} };
+    script(src="/js/index.js")
   body
-    div(id="mid-map" style="z-index: -9999")
+    div(id="mid-map")
       div(id="pointer")
       img(src="/maps/#{map.name}-mid.jpg")
-    script(src="/js/index.js")
