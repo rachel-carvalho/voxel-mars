@@ -46,8 +46,9 @@ $ ->
 
       div.toggle()
 
-      pointer.css top: ((map.center.y + Math.floor pos.z) / map.height) * img.height()
-      pointer.css left: ((map.center.x + Math.floor pos.x) / map.width) * img.width()
+      pointer.css
+        top: ((map.center.y + Math.floor pos.z) / map.height) * img.height()
+        left: ((map.center.x + Math.floor pos.x) / map.width) * img.width()
 
   game.voxels.on 'missingChunk', (chunkPositionRaw) ->
     chunkPosition = x: chunkPositionRaw[0], y: chunkPositionRaw[1], z: chunkPositionRaw[2]
