@@ -2,11 +2,13 @@ self.addEventListener 'message', (e) ->
   switch e.data.cmd
     when 'generateChunk'
       info = e.data.chunkInfo
-      self.postMessage
+      msg = 
         event: 'chunkGenerated'
         chunk: 
           voxels: generateChunk info
           position: info.positionRaw
+
+      self.postMessage msg, [msg.chunk.voxels.buffer]
 
 generateChunk = (info) ->
   {heightMap, position, size, heightScale} = info

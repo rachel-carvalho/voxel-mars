@@ -5,7 +5,7 @@ vengine = require 'voxel-engine'
 vplayer = require 'voxel-player'
 vwalk = require 'voxel-walk'
 
-worker = new Worker '/js/worker.js'
+worker = app.worker = new Worker '/js/worker.js'
 
 $ ->
   {map} = app
@@ -57,13 +57,14 @@ $ ->
     
     $.getJSON "/map/#{chunkPosition.x}/#{chunkPosition.z}.json", (heightMap) ->
       worker.postMessage 
-        cmd: 'generateChunk', 
+        cmd: 'generateChunk'
         chunkInfo: 
           heightMap: heightMap
           position: chunkPosition
           positionRaw: chunkPositionRaw
           size: chunkSize
           heightScale: map.heightScale
+
 
   worker.addEventListener 'message', (e) ->
     switch e.data.event
