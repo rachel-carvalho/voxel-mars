@@ -4,12 +4,18 @@ html(lang="en")
     title Voxel Mars
     meta(charset="utf-8")
     style(type="text/css").
-      html, body {margin: 0; padding: 0;}
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
       #pointer {
         position: absolute;
-        top: 0; left: 0;
-        width: 3px; height: 3px;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 5px;
         background-color: #f00;
+        border: 1px solid #fff;
+        margin-top: -3px;
+        margin-left: -3px;
       }
       #mid-map {
         display: none;
