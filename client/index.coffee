@@ -68,6 +68,8 @@ $ ->
 
   worker.addEventListener 'message', (e) ->
     switch e.data.event
+      when 'log'
+        console.log e.data.msg
       when 'chunkGenerated'
         game.showChunk
           position: e.data.chunk.position
