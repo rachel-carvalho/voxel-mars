@@ -5,12 +5,20 @@ browserify = require 'browserify-middleware'
 
 global.log = console.log
 
-map = name: 'mars'
+map = 
+  name: 'mars'
+  calculateHeightScale: ->
+    topographyMax = 23100 + 8200
+    topographyMax / @metersPerPixel
 
 fs.createReadStream("./public/maps/#{map.name}.png").pipe(new PNG filterType: 4).on 'parsed', ->
   map.width = @width
   map.height = @height
   map.data = @data
+  map.metersPerPixel = 1853
+
+  # map.heightScale = 32
+  map.heightScale = map.calculateHeightScale()
 
   chunkSize = map.chunkSize = 32
 

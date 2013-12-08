@@ -5,16 +5,17 @@ self.addEventListener 'message', (e) ->
       self.postMessage
         event: 'chunkGenerated'
         chunk: 
-          voxels: generateChunk(info.heightMap, info.position, info.size)
+          voxels: generateChunk info
           position: info.positionRaw
 
-generateChunk = (heightMap, position, size) ->
+generateChunk = (info) ->
+  {heightMap, position, size, heightScale} = info
   chunk = new Int8Array(size * size * size)
 
   if position.y is 0
     for x in [0...size]
       for z in [0...size]
-        height = Math.ceil (heightMap[Math.abs z][Math.abs x] / 255) * 32
+        height = Math.ceil (heightMap[Math.abs z][Math.abs x] / 255) * heightScale
 
         for y in [0..height]
           xIndex = Math.abs((size + x % size) % size)

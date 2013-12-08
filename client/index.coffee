@@ -63,6 +63,7 @@ $ ->
           position: chunkPosition
           positionRaw: chunkPositionRaw
           size: chunkSize
+          heightScale: map.heightScale
 
   worker.addEventListener 'message', (e) ->
     switch e.data.event
