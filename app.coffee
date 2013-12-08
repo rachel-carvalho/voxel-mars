@@ -12,7 +12,7 @@ fs.createReadStream("./public/maps/#{map.name}.png").pipe(new PNG filterType: 4)
   map.height = @height
   map.data = @data
 
-  chunkSize = 32
+  chunkSize = map.chunkSize = 32
 
   map.center = {x: map.width / 2, y: map.height / 2}
   olympus_mons = {x: 7319, y: 2443}

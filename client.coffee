@@ -8,7 +8,7 @@ $ ->
 
   {map} = app
 
-  chunkSize = 32
+  {chunkSize} = map
 
   game = app.game = vengine
     materials: ['height5']
@@ -46,35 +46,32 @@ $ ->
 
       div.toggle()
 
-      pointer.css top: "#{((map.center.y + Math.floor pos.z) / map.height) * img.height()}px"
-      pointer.css left: "#{((map.center.x + Math.floor pos.x) / map.width) * img.width()}px"
+      pointer.css top: ((map.center.y + Math.floor pos.z) / map.height) * img.height()
+      pointer.css left: ((map.center.x + Math.floor pos.x) / map.width) * img.width()
 
-  game.voxels.on 'missingChunk', (chunkPosition) ->
-    $.getJSON "/map/#{chunkPosition[0]}/#{chunkPosition[2]}.json", (heightmap) ->
+  game.voxels.on 'missingChunk', (chunkPositionRaw) ->
+    chunkPosition = x: chunkPositionRaw[0], y: chunkPositionRaw[1], z: chunkPositionRaw[2]
+    $.getJSON "/map/#{chunkPosition.x}/#{chunkPosition.z}.json", (chunkData) ->
 
       game.showChunk
-        position: chunkPosition
+        position: chunkPositionRaw
         dims: [chunkSize, chunkSize, chunkSize]
-        voxels: terrainGenerator(heightmap, chunkPosition, chunkSize)
+        voxels: generateChunk(chunkData, chunkPosition)
 
-  terrainGenerator = (map, position, w) ->
-    chunk = new Int8Array(w * w * w)
+  generateChunk = (data, position) ->
+    chunk = new Int8Array(chunkSize * chunkSize * chunkSize)
 
-    startX = 0 #position[0] * w
-    startY = 0 #position[1] * w
-    startZ = 0 #position[2] * w
+    if position.y is 0
+      for x in [0...chunkSize]
+        for z in [0...chunkSize]
+          height = Math.ceil (data[Math.abs z][Math.abs x] / 255) * 32
 
-    if position[1] is 0
-      for x in [startX...(startX + w)]
-        for z in [startZ...(startZ + w)]
-          height = Math.ceil (map[Math.abs z][Math.abs x] / 255) * 32
-
-          for h in [0..height]
-            xidx = Math.abs((w + x % w) % w)
-            yidx = Math.abs((w + h % w) % w)
-            zidx = Math.abs((w + z % w) % w)
+          for y in [0..height]
+            xIndex = Math.abs((chunkSize + x % chunkSize) % chunkSize)
+            yIndex = Math.abs((chunkSize + y % chunkSize) % chunkSize)
+            zIndex = Math.abs((chunkSize + z % chunkSize) % chunkSize)
         
-            idx = xidx + yidx * w + zidx * w * w
-            chunk[idx] = 1
+            index = xIndex + (yIndex * chunkSize) + (zIndex * chunkSize * chunkSize)
+            chunk[index] = 1
 
     chunk
