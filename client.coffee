@@ -5,6 +5,8 @@ vengine = require 'voxel-engine'
 vplayer = require 'voxel-player'
 vwalk = require 'voxel-walk'
 
+{map} = app
+
 get = (url, cb) ->
   xhr = new XMLHttpRequest()
   xhr.open 'GET', url
@@ -13,7 +15,7 @@ get = (url, cb) ->
 
 chunkSize = 32
 
-window.game = vengine
+game = app.game = vengine
   materials: ['height5']
   materialFlatColor: no
   generateChunks: no
@@ -39,22 +41,21 @@ game.on 'tick', ->
   if vx > 0.001 or vz > 0.001 then vwalk.stopWalking()
   else vwalk.startWalking()
 
-div = document.querySelector('#map')
+div = document.querySelector('#mid-map')
 pointer = document.querySelector('#pointer')
-img = document.querySelector('#map img')
+img = document.querySelector('#mid-map img')
 
 window.addEventListener 'keydown', (ev) ->
   if ev.keyCode is 'M'.charCodeAt(0)
-    get '/center', (center) ->
-      pos = target.position
-      
-      if div.style.display isnt 'block' then div.style.display = 'block'
-      
-      if div.style.zIndex is '-9999' then div.style.zIndex = '9999'
-      else div.style.zIndex = '-9999' 
+    pos = target.position
+    
+    if div.style.display isnt 'block' then div.style.display = 'block'
+    
+    if div.style.zIndex is '-9999' then div.style.zIndex = '9999'
+    else div.style.zIndex = '-9999' 
 
-      pointer.style.top = "#{((center.y + Math.floor pos.z) / 5760) * img.height}px"
-      pointer.style.left = "#{((center.x + Math.floor pos.x) / 11520) * img.width}px"
+    pointer.style.top = "#{((map.center.y + Math.floor pos.z) / map.height) * img.height}px"
+    pointer.style.left = "#{((map.center.x + Math.floor pos.x) / map.width) * img.width}px"
 
 game.voxels.on 'missingChunk', (chunkPosition) ->
   get "/map/#{chunkPosition[0]}/#{chunkPosition[2]}.json", (heightmap) ->

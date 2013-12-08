@@ -1,0 +1,27 @@
+doctype 5
+html(lang="en")
+  head
+    title Voxel Mars
+    meta(charset="utf-8")
+    style(type="text/css").
+      html, body {margin: 0; padding: 0;}
+      #pointer {
+        position: absolute;
+        top: 0; left: 0;
+        width: 3px; height: 3px;
+        background-color: #f00;
+      }
+      #mid-map {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%;
+        display: none;
+      }
+      #mid-map img {width: 100%;}
+    script.
+      window.app = { map: !{json(map, { except: 'data' })} };
+  body
+    div(id="mid-map" style="z-index: -9999")
+      div(id="pointer")
+      img(src="/maps/#{map.name}-mid.jpg")
+    script(src="/js/index.js")
