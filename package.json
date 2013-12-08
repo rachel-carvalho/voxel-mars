@@ -3,6 +3,10 @@
   "version" : "0.0.1",
   "description" : "A voxel.js world generated from real Mars topography data",
   "main" : "app.coffee",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rachel-carvalho/voxel-mars.git"
+  },
   "dependencies" : {
     "domnode": "https://github.com/maxogden/domnode/tarball/master",
     "voxel": "0.3.1",
