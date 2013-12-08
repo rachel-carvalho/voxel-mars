@@ -17,7 +17,6 @@ fs.createReadStream("./public/maps/#{map.name}.png").pipe(new PNG filterType: 4)
   map.data = @data
   map.metersPerPixel = 1853
 
-  # map.heightScale = 32
   map.heightScale = map.calculateHeightScale()
 
   chunkSize = map.chunkSize = 32
