@@ -11,7 +11,7 @@ map =
     topographyMax = 23100 + 8200
     topographyMax / @metersPerPixel
 
-fs.createReadStream("./public/maps/#{map.name}.png").pipe(new PNG filterType: 4).on 'parsed', ->
+fs.createReadStream("./public/maps/#{map.name}/heightmap.png").pipe(new PNG filterType: 4).on 'parsed', ->
   map.width = @width
   map.height = @height
   map.data = @data
