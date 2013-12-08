@@ -25,7 +25,9 @@ fs.createReadStream("./public/maps/#{map.name}.png").pipe(new PNG filterType: 4)
 
   app.locals require('./locals')
 
-  app.use '/js/index.js', browserify './client.coffee', transform: ['coffeeify']
+  for name in 'index worker'.split ' '
+    app.use "/js/#{name}.js", browserify "./client/#{name}.coffee", transform: ['coffeeify']
+
   app.use express.static "#{__dirname}/public"
 
   app.get '/', (req, res) ->

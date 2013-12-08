@@ -1,11 +1,13 @@
 window.log = -> console.log.apply console, arguments
 
-$ ->
-  voxel = require 'voxel'
-  vengine = require 'voxel-engine'
-  vplayer = require 'voxel-player'
-  vwalk = require 'voxel-walk'
+voxel = require 'voxel'
+vengine = require 'voxel-engine'
+vplayer = require 'voxel-player'
+vwalk = require 'voxel-walk'
 
+worker = new Worker '/js/worker.js'
+
+$ ->
   {map} = app
 
   {chunkSize} = map
@@ -52,27 +54,20 @@ $ ->
 
   game.voxels.on 'missingChunk', (chunkPositionRaw) ->
     chunkPosition = x: chunkPositionRaw[0], y: chunkPositionRaw[1], z: chunkPositionRaw[2]
-    $.getJSON "/map/#{chunkPosition.x}/#{chunkPosition.z}.json", (chunkData) ->
+    
+    $.getJSON "/map/#{chunkPosition.x}/#{chunkPosition.z}.json", (heightMap) ->
+      worker.postMessage 
+        cmd: 'generateChunk', 
+        chunkInfo: 
+          heightMap: heightMap
+          position: chunkPosition
+          positionRaw: chunkPositionRaw
+          size: chunkSize
 
-      game.showChunk
-        position: chunkPositionRaw
-        dims: [chunkSize, chunkSize, chunkSize]
-        voxels: generateChunk(chunkData, chunkPosition)
-
-  generateChunk = (data, position) ->
-    chunk = new Int8Array(chunkSize * chunkSize * chunkSize)
-
-    if position.y is 0
-      for x in [0...chunkSize]
-        for z in [0...chunkSize]
-          height = Math.ceil (data[Math.abs z][Math.abs x] / 255) * 32
-
-          for y in [0..height]
-            xIndex = Math.abs((chunkSize + x % chunkSize) % chunkSize)
-            yIndex = Math.abs((chunkSize + y % chunkSize) % chunkSize)
-            zIndex = Math.abs((chunkSize + z % chunkSize) % chunkSize)
-        
-            index = xIndex + (yIndex * chunkSize) + (zIndex * chunkSize * chunkSize)
-            chunk[index] = 1
-
-    chunk
+  worker.addEventListener 'message', (e) ->
+    switch e.data.event
+      when 'chunkGenerated'
+        game.showChunk
+          position: e.data.chunk.position
+          dims: [chunkSize, chunkSize, chunkSize]
+          voxels: e.data.chunk.voxels
