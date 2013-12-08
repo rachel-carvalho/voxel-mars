@@ -42,15 +42,21 @@ $ ->
   pointer = $('#pointer')
   img = $('#mid-map img')
 
+  updateMidmap = (pos) ->
+    pointer.css
+      top: ((map.center.y + Math.floor pos.z) / map.height) * img.height()
+      left: ((map.center.x + Math.floor pos.x) / map.width) * img.width()
+
+  game.voxelRegion.on 'change', (pos) ->
+    updateMidmap x: pos[0], y: pos[1], z: pos[2]
+
   $(window).keydown (ev) ->
     if ev.keyCode is 'M'.charCodeAt(0)
       pos = target.position
 
       div.toggle()
 
-      pointer.css
-        top: ((map.center.y + Math.floor pos.z) / map.height) * img.height()
-        left: ((map.center.x + Math.floor pos.x) / map.width) * img.width()
+      updateMidmap pos
 
   game.voxels.on 'missingChunk', (chunkPositionRaw) ->
     chunkPosition = x: chunkPositionRaw[0], y: chunkPositionRaw[1], z: chunkPositionRaw[2]
