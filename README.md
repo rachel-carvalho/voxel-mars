@@ -11,10 +11,16 @@ We're loading this data onto the awesome webgl-based [VoxelJS](http://voxeljs.co
 
 ![voxel-mars](http://i.imgur.com/PaG4oiH.jpg)
 
-This is a very alpha release; right now you can stroll through a scaled down Mars and press M to see where you are on the global map. Future ideas include:
+This release is a very early alpha; right now you can freely roam through a lower resolution Mars (1800 meters per voxel) and press M to see where you are on the global map. Future ideas include:
 
-  - a science-based survival mode on which you have to generate your oxygen and fuel, extract your water, grow your food, and build martian bricks.
+  - use the map with the highest available resolution (400 meters per pixel/voxel)
+
+  - a science-based survival mode on which you have to generate your oxygen and fuel, extract your water, grow your food, make martian bricks, etc
 
   - use voxel-sky to add the sun, phobos and deimos
   
   - open Google Mars in your location
+  
+  - add every lander and rover ever sent to Mars and put them at their correct locations
+  
+  - allow player to fly in "tourism" mode
