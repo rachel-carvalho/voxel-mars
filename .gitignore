@@ -1,2 +1,3 @@
 browserify-bundle.js
 node_modules
+public/maps/*/chunks
