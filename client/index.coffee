@@ -13,7 +13,7 @@ $ ->
   {chunkSize} = map
 
   game = app.game = vengine
-    materials: ['height5']
+    materials: ['mars.png']
     materialFlatColor: no
     generateChunks: no
     chunkSize: chunkSize
