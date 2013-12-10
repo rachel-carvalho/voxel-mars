@@ -5,10 +5,13 @@ vengine = require 'voxel-engine'
 vplayer = require 'voxel-player'
 vwalk = require 'voxel-walk'
 
+window.app = {}
+
 worker = app.worker = new Worker '/js/worker.js'
 
 $ ->
   $.getJSON 'maps/mars/map.json', (map) ->
+    app.map = map
     map.heightScale = map.deltaY / map.metersPerPixel
     # TODO: calculate center from chosen POI
     map.center = {x: map.width / 2, y: map.height / 2}

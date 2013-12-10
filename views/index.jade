@@ -22,10 +22,8 @@ html(lang="en")
       }
       #mid-map img {width: 100%;}
     script(src="/js/zepto-1.1.1.min.js")
-    script.
-      window.app = { map: !{json(map, { except: 'data' })} };
     script(src="/js/index.js")
   body
     div(id="mid-map")
       div(id="pointer")
-      img(src="/maps/#{map.name}/midmap.jpg")
+      img(src="/maps/mars/midmap.jpg")
