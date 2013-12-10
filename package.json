@@ -20,7 +20,7 @@
   "devDependencies": {
     "pngjs": "0.4.0-alpha",
     "fs-extra": "0.8.1"
-  }
+  },
   "author": {
     "name": "Rachel Carvalho",
     "email": "rachel.carvalho@gmail.com"
