@@ -19,7 +19,7 @@ $ ->
     {chunkSize} = map.generateOptions
 
     game = app.game = vengine
-      materials: ['height5']
+      materials: ['mars']
       materialFlatColor: no
       generateChunks: no
       chunkSize: chunkSize
