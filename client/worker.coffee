@@ -17,9 +17,11 @@ generateChunk = (info) ->
   if position.y > -1
     startY = position.y * size
 
-    for x in [0...size]
-      for z in [0...size]
-        height = Math.ceil (heightMap[Math.abs z][Math.abs x] / 255) * heightScale
+    for z in [0...size]
+      for x in [0...size]
+        imgIdx = (size * z + x) << 2
+        data = heightMap[imgIdx]
+        height = Math.ceil((data / 255) * heightScale)
 
         if height > startY
           for y in [startY..height]
@@ -29,5 +31,4 @@ generateChunk = (info) ->
         
             index = xIndex + (yIndex * size) + (zIndex * size * size)
             chunk[index] = 1
-
   chunk

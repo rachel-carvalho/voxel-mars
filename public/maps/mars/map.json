@@ -1,0 +1,23 @@
+{
+  "name": "mars",
+  "width": 11520,
+  "height": 5760,
+  "metersPerPixel": 1853,
+  "deltaY": 29429,
+  "pointsOfInterest": {
+    "olympusMons": {
+      "name": "Olympus Mons",
+      "x": 7319,
+      "y": 2443
+    },
+    "noctis": {
+      "name": "Noctis Labyrinthus",
+      "x": 8403,
+      "y": 3067
+    }
+  },
+  "generateOptions": {
+    "startPosition": "olympusMons",
+    "chunkSize": 32
+  }
+}
