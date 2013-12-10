@@ -8,7 +8,7 @@ global.log = console.log
 map = 
   name: 'mars'
   calculateHeightScale: ->
-    topographyMax = 23100 + 8200
+    topographyMax = 29429
     topographyMax / @metersPerPixel
 
 fs.createReadStream("./public/maps/#{map.name}/heightmap.png").pipe(new PNG filterType: 4).on 'parsed', ->
