@@ -13,13 +13,14 @@
     "voxel-engine": "0.19.0",
     "voxel-player": "0.1.0",
     "voxel-walk": "0.0.5",
-    "pngjs": "0.4.0-alpha",
     "express": "3.4.6",
     "coffeeify": "0.5.1",
-    "browserify-middleware": "1.12.0",
-    "jade": "0.35.0",
-    "fs-extra": "0.8.1"
+    "browserify-middleware": "1.12.0"
   },
+  "devDependencies": {
+    "pngjs": "0.4.0-alpha",
+    "fs-extra": "0.8.1"
+  }
   "author": {
     "name": "Rachel Carvalho",
     "email": "rachel.carvalho@gmail.com"
