@@ -84,7 +84,7 @@ $ ->
           ,
           [data.buffer]
 
-      hmImg.src = "/maps/mars/chunks/X#{chunkPosition.x}/Y#{chunkPosition.z}.png"
+      hmImg.src = "/maps/mars/chunks/x#{chunkPosition.x}/y#{chunkPosition.z}.png"
 
     worker.addEventListener 'message', (e) ->
       switch e.data.event
