@@ -24,7 +24,7 @@ fs.createReadStream("./public/maps/#{map.name}/heightmap.png").pipe(new PNG filt
   map.center = {x: map.width / 2, y: map.height / 2}
   olympus_mons = {x: 7319, y: 2443}
   noctis_labyrinthus = {x: 8403, y: 3067}
-  map.center = olympus_mons
+  # map.center = olympus_mons
 
   app = express()
 

@@ -60,17 +60,27 @@ $ ->
 
   game.voxels.on 'missingChunk', (chunkPositionRaw) ->
     chunkPosition = x: chunkPositionRaw[0], y: chunkPositionRaw[1], z: chunkPositionRaw[2]
-    
-    $.getJSON "/map/#{chunkPosition.x}/#{chunkPosition.z}.json", (heightMap) ->
+
+    hmImg = new Image()
+    hmImg.onload = ->
+      canvas = document.createElement 'canvas'
+      canvas.width = chunkSize
+      canvas.height = chunkSize
+      ctx = canvas.getContext '2d'
+      ctx.drawImage this, 0, 0
+      data = ctx.getImageData(0, 0, chunkSize, chunkSize).data
       worker.postMessage 
         cmd: 'generateChunk'
         chunkInfo: 
-          heightMap: heightMap
+          heightMap: data
           position: chunkPosition
           positionRaw: chunkPositionRaw
           size: chunkSize
           heightScale: map.heightScale
+        ,
+        [data.buffer]
 
+    hmImg.src = "/maps/mars/chunks/X#{chunkPosition.x}/Y#{chunkPosition.z}.png"
 
   worker.addEventListener 'message', (e) ->
     switch e.data.event
