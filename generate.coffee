@@ -20,15 +20,14 @@ jsonPath = "#{mapPath}/map.json"
 log "loading json at #{jsonPath}"
 
 map = fse.readJsonSync jsonPath
-map.heightmap ?= 'heightmap.png'
 
 log "using map info #{JSON.stringify map}"
 
 calculateChunk = (voxels, chunkSize) ->
   qty = Math.ceil voxels / chunkSize
   {
-    start: -(Math.ceil (qty - 1) / 2)
-    end: Math.floor (qty - 1) / 2
+    start: -(Math.ceil((qty - 1) / 2))
+    end: Math.floor((qty - 1) / 2)
   }
 
 chunkDir = "#{mapPath}/chunks"
@@ -36,61 +35,119 @@ chunkDir = "#{mapPath}/chunks"
 log 'deleting current chunk dir at ', chunkDir
 fse.removeSync chunkDir
 
-heightMapPath = "#{mapPath}/#{map.heightmap}"
+map.heightmap ?= 'heightmap.png'
+map.cols ?= 1
+map.rows ?= 1
+map.fullwidth = map.width * map.cols
+map.fullheight = map.height * map.rows
 
-log "loading height map from #{heightMapPath}"
+center =
+  x: Math.floor(map.fullwidth / 2)
+  y: Math.floor(map.fullheight / 2)
 
-fse.createReadStream(heightMapPath).pipe(new PNG filterType: 4).on 'parsed', ->
-  rawData = @data
-  center = { x: Math.floor(map.width / 2), y: Math.floor(map.height / 2) }
+log {center}
 
-  {chunkSize} = map.generateOptions
+{chunkSize} = map.generateOptions
 
-  xChunks = calculateChunk map.width, chunkSize
-  yChunks = calculateChunk map.height, chunkSize
+xChunks = calculateChunk map.fullwidth, chunkSize
+yChunks = calculateChunk map.fullheight, chunkSize
 
-  chunks = []
+log {yChunks, xChunks}
 
-  log 'preparing to generate chunks, x: ', xChunks, ', y: ', yChunks
-  for cy in [yChunks.start..yChunks.end]
-    for cx in [xChunks.start..xChunks.end]
-      log 'creating chunk png for X', cx, ', Y', cy
+chunkArray =
+  y: [yChunks.start..yChunks.end]
+  x: [xChunks.start..xChunks.end]
 
-      chunk = new PNG width: chunkSize, height: chunkSize
+chunksPerFile =
+  y: Math.ceil(chunkArray.y.length / map.rows)
+  x: Math.ceil(chunkArray.x.length / map.cols)
 
-      start =
-        x: center.x + (cx * chunkSize)
-        y: center.y + (cy * chunkSize)
+log {chunksPerFile}
+
+log "reading heightmap from #{map.rows} rows and #{map.cols} cols"
+
+row = 0
+col = 0
+
+readFile = (row, col) ->
+  if map.cols == 1 and map.rows == 1
+    heightMapPath = "#{mapPath}/#{map.heightmap}"
+  else
+    heightMapPath = "#{mapPath}/heightmap/x#{col}y#{row}.png"
+
+  log "loading height map from #{heightMapPath}"
+
+  fse.createReadStream(heightMapPath).pipe(new PNG filterType: 4).on 'parsed', ->
+    rawData = @data
+
+    chunks = []
+
+    section =
+      y:
+        start: row * chunksPerFile.y
+      x:
+        start: col * chunksPerFile.x
+
+    section.y.end = section.y.start + chunksPerFile.y
+    section.x.end = section.x.start + chunksPerFile.x
+
+    # for cy in chunkArray.y[section.y.start...section.y.end]
+    #   for cx in chunkArray.x[section.x.start...section.x.end]
+    #     log 'creating chunk png for X', cx, ', Y', cy
+
+    #     chunk = new PNG width: chunkSize, height: chunkSize
+
+    #     start =
+    #       x: center.x + (cx * chunkSize)
+    #       y: center.y + (cy * chunkSize)
+
+    #     log {start}
+        
+    #     continue
+
+    #     pixelIdx = 0
+    #     for y in [(start.y)...(start.y + chunkSize)]
+    #       for x in [(start.x)...(start.x + chunkSize)]
+    #         # << = left shift operator
+    #         idx = (map.width * y + x) << 2
+    #         chunkIdx = pixelIdx << 2
+    #         for offset in [0..3]
+    #           chunk.data[chunkIdx + offset] = rawData[idx + offset]
+    #         pixelIdx++
+
+    #     pngDir = "#{chunkDir}/x#{cx}"
+    #     pngPath = "#{pngDir}/y#{cy}.png"
+
+    #     chunks.push {chunk, pngDir, pngPath}
+
+    # chunkIdx = 0
+
+    # writeChunk = ->
+    #   fse.mkdirsSync chunks[chunkIdx].pngDir
       
-      pixelIdx = 0
-      for y in [(start.y)...(start.y + chunkSize)]
-        for x in [(start.x)...(start.x + chunkSize)]
-          # << = left shift operator
-          idx = (map.width * y + x) << 2
-          chunkIdx = pixelIdx << 2
-          for offset in [0..3]
-            chunk.data[chunkIdx + offset] = rawData[idx + offset]
-          pixelIdx++
+    #   log 'writing png at ', chunks[chunkIdx].pngPath
 
-      pngDir = "#{chunkDir}/x#{cx}"
-      pngPath = "#{pngDir}/y#{cy}.png"
+    #   wStream = fse.createWriteStream chunks[chunkIdx].pngPath
 
-      chunks.push {chunk, pngDir, pngPath}
-  
-chunkIdx = 0
+    #   wStream.on 'finish', ->
+    #     chunkIdx++
+    #     if chunkIdx < chunks.length
+    #       writeChunk()
 
-writeChunk = ->
-  fse.mkdirsSync chunks[chunkIdx].pngDir
-  
-  log 'writing png at ', chunks[chunkIdx].pngPath
+    #   chunks[chunkIdx].chunk.pack().pipe wStream
 
-  wStream = fse.createWriteStream chunks[chunkIdx].pngPath
+    # writeChunk()
 
-  wStream.on 'finish', ->
-    chunkIdx++
-    if chunkIdx < chunks.length
-      writeChunk()
+    col++
+    if col < map.cols
+      readFile row, col
+    else
+      row++
+      col = 0
+      if row < map.rows
+        readFile row, col
+      else
+        log 'THE END'
 
-  chunks[chunkIdx].chunk.pack().pipe wStream
+readFile row, col
 
-writeChunk()

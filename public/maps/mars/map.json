@@ -1,9 +1,11 @@
 {
   "name": "mars",
   "width": 11520,
-  "height": 5760,
-  "metersPerPixel": 1853,
+  "height": 5632,
+  "metersPerPixel": 463,
   "deltaY": 29429,
+  "cols": 2,
+  "rows": 1,
   "pointsOfInterest": {
     "olympusMons": {
       "name": "Olympus Mons",
