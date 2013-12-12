@@ -116,34 +116,34 @@ readFile = (row, col) ->
 
         chunks.push {chunk, pngDir, pngPath}
 
-    # chunkIdx = 0
+    chunkIdx = 0
 
-    # writeChunk = ->
-    #   fse.mkdirsSync chunks[chunkIdx].pngDir
+    writeChunk = ->
+      fse.mkdirsSync chunks[chunkIdx].pngDir
       
-    #   log 'writing png at ', chunks[chunkIdx].pngPath
+      log 'writing png at ', chunks[chunkIdx].pngPath
 
-    #   wStream = fse.createWriteStream chunks[chunkIdx].pngPath
+      wStream = fse.createWriteStream chunks[chunkIdx].pngPath
 
-    #   wStream.on 'finish', ->
-    #     chunkIdx++
-    #     if chunkIdx < chunks.length
-    #       writeChunk()
+      wStream.on 'finish', ->
+        chunkIdx++
+        if chunkIdx < chunks.length
+          writeChunk()
+        else
+          col++
+          if col < map.cols
+            readFile row, col
+          else
+            row++
+            col = 0
+            if row < map.rows
+              readFile row, col
+            else
+              log 'THE END'
 
-    #   chunks[chunkIdx].chunk.pack().pipe wStream
+      chunks[chunkIdx].chunk.pack().pipe wStream
 
-    # writeChunk()
-
-    col++
-    if col < map.cols
-      readFile row, col
-    else
-      row++
-      col = 0
-      if row < map.rows
-        readFile row, col
-      else
-        log 'THE END'
+    writeChunk()
 
 readFile row, col
 
