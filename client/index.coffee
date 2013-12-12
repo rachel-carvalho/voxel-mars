@@ -9,8 +9,10 @@ window.app = {}
 
 worker = app.worker = new Worker '/js/worker.js'
 
+mapDir = 'maps/mars'
+
 $ ->
-  $.getJSON 'maps/mars/map.json', (map) ->
+  $.getJSON "#{mapDir}/map.json", (map) ->
     app.map = map
     map.heightScale = map.deltaY / map.metersPerPixel
     # TODO: calculate center from chosen POI
@@ -84,7 +86,7 @@ $ ->
           ,
           [data.buffer]
 
-      hmImg.src = "/maps/mars/chunks/x#{chunkPosition.x}/y#{chunkPosition.z}.png"
+      hmImg.src = "#{mapDir}/chunks/x#{chunkPosition.x}/y#{chunkPosition.z}.png"
 
     worker.addEventListener 'message', (e) ->
       switch e.data.event
