@@ -91,34 +91,30 @@ readFile = (row, col) ->
     section.y.end = section.y.start + chunksPerFile.y
     section.x.end = section.x.start + chunksPerFile.x
 
-    # for cy in chunkArray.y[section.y.start...section.y.end]
-    #   for cx in chunkArray.x[section.x.start...section.x.end]
-    #     log 'creating chunk png for X', cx, ', Y', cy
+    for cy in chunkArray.y[section.y.start...section.y.end]
+      for cx in chunkArray.x[section.x.start...section.x.end]
+        log 'creating chunk png for X', cx, ', Y', cy
 
-    #     chunk = new PNG width: chunkSize, height: chunkSize
+        chunk = new PNG width: chunkSize, height: chunkSize
 
-    #     start =
-    #       x: center.x + (cx * chunkSize)
-    #       y: center.y + (cy * chunkSize)
+        start =
+          x: center.x + (cx * chunkSize) - (col * map.width)
+          y: center.y + (cy * chunkSize) - (row * map.height)
 
-    #     log {start}
-        
-    #     continue
+        pixelIdx = 0
+        for y in [(start.y)...(start.y + chunkSize)]
+          for x in [(start.x)...(start.x + chunkSize)]
+            # << = left shift operator
+            idx = (map.width * y + x) << 2
+            chunkIdx = pixelIdx << 2
+            for offset in [0..3]
+              chunk.data[chunkIdx + offset] = rawData[idx + offset]
+            pixelIdx++
 
-    #     pixelIdx = 0
-    #     for y in [(start.y)...(start.y + chunkSize)]
-    #       for x in [(start.x)...(start.x + chunkSize)]
-    #         # << = left shift operator
-    #         idx = (map.width * y + x) << 2
-    #         chunkIdx = pixelIdx << 2
-    #         for offset in [0..3]
-    #           chunk.data[chunkIdx + offset] = rawData[idx + offset]
-    #         pixelIdx++
+        pngDir = "#{chunkDir}/x#{cx}"
+        pngPath = "#{pngDir}/y#{cy}.png"
 
-    #     pngDir = "#{chunkDir}/x#{cx}"
-    #     pngPath = "#{pngDir}/y#{cy}.png"
-
-    #     chunks.push {chunk, pngDir, pngPath}
+        chunks.push {chunk, pngDir, pngPath}
 
     # chunkIdx = 0
 
