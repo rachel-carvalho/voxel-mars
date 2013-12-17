@@ -143,11 +143,11 @@ readFile = (row, col) ->
       wStream.on 'finish', ->
         cx++
         log 'next x'
-        if cx >= section.x.end
-          cx = section.x.start
+        if cx >= chunkArray.x[section.x.end - 1]
+          cx = chunkArray.x[section.x.start]
           cy++
           log 'next y'
-        if cy < section.y.end
+        if cy < chunkArray.y[section.y.end - 1]
           createChunk cx, cy
         else
           log 'next file x'
@@ -163,7 +163,7 @@ readFile = (row, col) ->
 
       chunk.pack().pipe wStream
 
-    createChunk section.y.start, section.x.start
+    createChunk chunkArray.x[section.x.start], chunkArray.y[section.y.start]
 
 readFile row, col
 
