@@ -2,5 +2,6 @@ browserify-bundle.js
 node_modules
 public/maps/*/chunks
 public/maps/*/heightmap
+public/maps/*/*.img
 .settings
 .c9revisions
