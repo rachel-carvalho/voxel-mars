@@ -15,7 +15,8 @@
     "voxel-walk": "0.0.5",
     "express": "3.4.6",
     "coffeeify": "0.5.1",
-    "browserify-middleware": "1.12.0"
+    "browserify-middleware": "1.12.0",
+    "jbinary": "1.6.0"
   },
   "devDependencies": {
     "pngjs": "0.4.0-alpha",
@@ -27,6 +28,8 @@
   },
   "license": "MIT",
   "engines": [
-    { "node": "0.10.22" }
+    {
+      "node": "0.10.22"
+    }
   ]
 }
