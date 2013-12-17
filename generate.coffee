@@ -8,11 +8,14 @@
 #   heightScale: by default it's calculated by deltaY / metersPerPixel
 
 
-jbinary = require 'jbinary'
 fse = require 'fs-extra'
 {PNG} = require 'pngjs'
+Buffer = require('buffer').Buffer
 
 global.log = console.log
+
+time =
+  start: process.hrtime()
 
 mapPath = './public/maps/mars'
 
@@ -85,84 +88,85 @@ readFile = (row, col) ->
 
   log "loading height map from #{heightMapPath}"
 
-  typeSet =
-    img:
-      'jBinary.littleEndian': false
-      pixel: 'int16'
+  fd = fse.openSync heightMapPath, 'r'
+  totalSize = (map.width * bytesPerPixel) * (map.height * bytesPerPixel)
+  buffer = new Buffer totalSize
+  fse.readSync fd, buffer, 0, totalSize, 0
+  
+  chunks = []
 
-  jbinary.load heightMapPath, typeSet, (err, binary) ->
-    chunks = []
+  section =
+    y:
+      start: row * chunksPerFile.y
+    x:
+      start: col * chunksPerFile.x
 
-    section =
-      y:
-        start: row * chunksPerFile.y
-      x:
-        start: col * chunksPerFile.x
+  section.y.end = section.y.start + chunksPerFile.y
+  section.x.end = section.x.start + chunksPerFile.x
 
-    section.y.end = section.y.start + chunksPerFile.y
-    section.x.end = section.x.start + chunksPerFile.x
+  createChunk = (cx, cy) ->
+    log 'creating chunk png for X', cx, ', Y', cy
 
-    createChunk = (cx, cy) ->
-      log 'creating chunk png for X', cx, ', Y', cy
+    chunk = new PNG width: chunkSize, height: chunkSize
 
-      chunk = new PNG width: chunkSize, height: chunkSize
+    start =
+      x: center.x + (cx * chunkSize) - (col * map.width)
+      y: center.y + (cy * chunkSize) - (row * map.height)
 
-      start =
-        x: center.x + (cx * chunkSize) - (col * map.width)
-        y: center.y + (cy * chunkSize) - (row * map.height)
+    for y in [(start.y)...(start.y + chunkSize)]
+      for x in [(start.x)...(start.x + chunkSize)]
+        bufPosition = ((map.width * bytesPerPixel) * y) + (x * bytesPerPixel)
+        original = buffer.readInt16BE(bufPosition)
+        # making it unsigned
+        unsigned = original + maxNegativeInt16
+        # using min-max scale
+        scaled = (unsigned - min.value) / (max.value - min.value)
+        # scaling down to 0 - 255
+        hex = Math.round(scaled * maxColor)
+        
+        # << = left shift operator
+        idx = (chunk.width * (y - start.y) + (x - start.x)) << 2
+        # same color in all 3 channels
+        for offset in [0..2]
+          chunk.data[idx + offset] = hex
+        # alpha ff for all
+        chunk.data[idx + 3] = 0xff
 
-      for y in [(start.y)...(start.y + chunkSize)]
-        for x in [(start.x)...(start.x + chunkSize)]
-          binary.seek ((map.width * bytesPerPixel) * y) + (x * bytesPerPixel)
-          original = binary.read('img').pixel
-          # making it unsigned
-          unsigned = original + maxNegativeInt16
-          # using min-max scale
-          scaled = (unsigned - min.value) / (max.value - min.value)
-          # scaling down to 0 - 255
-          hex = Math.round(scaled * maxColor)
-          
-          # << = left shift operator
-          idx = (chunk.width * (y - start.y) + (x - start.x)) << 2
-          # same color in all 3 channels
-          for offset in [0..2]
-            chunk.data[idx + offset] = hex
-          # alpha ff for all
-          chunk.data[idx + 3] = 0xff
+    pngDir = "#{chunkDir}/x#{cx}"
+    pngPath = "#{pngDir}/y#{cy}.png"
 
-      pngDir = "#{chunkDir}/x#{cx}"
-      pngPath = "#{pngDir}/y#{cy}.png"
+    fse.mkdirsSync pngDir
+    
+    log 'writing png at ', pngPath
 
-      fse.mkdirsSync pngDir
-      
-      log 'writing png at ', pngPath
+    wStream = fse.createWriteStream pngPath
 
-      wStream = fse.createWriteStream pngPath
-
-      wStream.on 'finish', ->
-        cx++
-        log 'next x'
-        if cx > chunkArray.x[section.x.end - 1]
-          cx = chunkArray.x[section.x.start]
-          cy++
-          log 'next y'
-        if cy <= chunkArray.y[section.y.end - 1]
-          createChunk cx, cy
+    wStream.on 'finish', ->
+      cx++
+      log 'next x'
+      if cx > chunkArray.x[section.x.end - 1]
+        cx = chunkArray.x[section.x.start]
+        cy++
+        log 'next y'
+      if cy <= chunkArray.y[section.y.end - 1]
+        createChunk cx, cy
+      else
+        log 'next file x'
+        col++
+        if col >= map.cols
+          col = 0
+          row++
+          log 'next file y'
+        if row < map.rows
+          readFile row, col
         else
-          log 'next file x'
-          col++
-          if col >= map.cols
-            col = 0
-            row++
-            log 'next file y'
-          if row < map.rows
-            readFile row, col
-          else
-            log 'THE END'
+          time.diff = process.hrtime(time.start)
+          console.log time
+          log 'THE END'
 
-      chunk.pack().pipe wStream
+    chunk.pack().pipe wStream
 
-    createChunk chunkArray.x[section.x.start], chunkArray.y[section.y.start]
+  createChunk chunkArray.x[section.x.start], chunkArray.y[section.y.start]
 
 readFile row, col
 
