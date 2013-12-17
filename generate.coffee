@@ -81,8 +81,7 @@ readFile = (row, col) ->
   if map.cols == 1 and map.rows == 1
     heightMapPath = "#{mapPath}/#{map.heightmap}"
   else
-    # heightMapPath = "#{mapPath}/heightmap/x#{col}y#{row}.png"
-    throw 'multi-file not implemented yet'
+    heightMapPath = "#{mapPath}/heightmap/x#{col}y#{row}.img"
 
   log "loading height map from #{heightMapPath}"
 
@@ -143,11 +142,11 @@ readFile = (row, col) ->
       wStream.on 'finish', ->
         cx++
         log 'next x'
-        if cx >= chunkArray.x[section.x.end - 1]
+        if cx > chunkArray.x[section.x.end - 1]
           cx = chunkArray.x[section.x.start]
           cy++
           log 'next y'
-        if cy < chunkArray.y[section.y.end - 1]
+        if cy <= chunkArray.y[section.y.end - 1]
           createChunk cx, cy
         else
           log 'next file x'
