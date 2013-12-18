@@ -22,7 +22,15 @@ $ ->
     map.fullheight = map.height * map.rows
     map.center = {x: map.fullwidth / 2, y: map.fullheight / 2}
 
-    {chunkSize} = map.generateOptions
+    {chunkSize, zones} = map.generateOptions
+    zones ?= {}
+    zones.cols ?= 1
+    zones.rows ?= 1
+    zones.width = Math.round(map.width / zones.cols)
+    zones.height = Math.round(map.height / zones.rows)
+
+    origin = [map.fullwidth / 2 / chunkSize, 0, map.fullheight / 2 / chunkSize]
+    origin = [5958 / chunkSize,0,3412 / chunkSize]
 
     game = app.game = vengine
       materials: ['mars']
@@ -30,7 +38,7 @@ $ ->
       generateChunks: no
       chunkSize: chunkSize
       chunkDistance: 2
-      worldOrigin: [0, 0, 0]
+      worldOrigin: origin
       controls: {discreteFire: true}
       skyColor: 0xFA8072
 
@@ -38,7 +46,7 @@ $ ->
 
     avatar = vplayer(game)('astronaut.png')
     avatar.possess()
-    avatar.position.set(0, 50, 0)
+    avatar.position.set(origin[0] * chunkSize, 100, origin[2] * chunkSize)
     avatar.toggle()
 
     target = game.controls.target()
@@ -68,29 +76,70 @@ $ ->
 
         updateMidmap target.position
 
+    convertChunkToZone = (chunkPosition) ->
+      pixelPos = 
+        x: chunkPosition.x * chunkSize
+        z: chunkPosition.z * chunkSize
+      
+      zone =
+        x: Math.floor(pixelPos.x / zones.width)
+        z: Math.floor(pixelPos.z / zones.height)
+
+      relativePosition =
+        x: pixelPos.x % zones.width
+        z: pixelPos.z % zones.height
+
+      {zone, relativePosition}
+
+    loadedZones = {}
+
+    renderChunk = (ctx, imgPosition, chunkPosition, chunkPositionRaw) ->
+      data = ctx.getImageData(imgPosition.x, imgPosition.z, chunkSize, chunkSize).data
+      worker.postMessage 
+        cmd: 'generateChunk'
+        chunkInfo: 
+          heightMap: data
+          position: chunkPosition
+          positionRaw: chunkPositionRaw
+          size: chunkSize
+          heightScale: map.heightScale
+        ,
+        [data.buffer]
+
     game.voxels.on 'missingChunk', (chunkPositionRaw) ->
       chunkPosition = x: chunkPositionRaw[0], y: chunkPositionRaw[1], z: chunkPositionRaw[2]
 
-      hmImg = new Image()
-      hmImg.onload = ->
-        canvas = document.createElement 'canvas'
-        canvas.width = chunkSize
-        canvas.height = chunkSize
-        ctx = canvas.getContext '2d'
-        ctx.drawImage this, 0, 0
-        data = ctx.getImageData(0, 0, chunkSize, chunkSize).data
-        worker.postMessage 
-          cmd: 'generateChunk'
-          chunkInfo: 
-            heightMap: data
-            position: chunkPosition
-            positionRaw: chunkPositionRaw
-            size: chunkSize
-            heightScale: map.heightScale
-          ,
-          [data.buffer]
+      {zone, relativePosition} = convertChunkToZone chunkPosition
 
-      hmImg.src = "#{mapDir}/chunks/x#{chunkPosition.x}/y#{chunkPosition.z}.png"
+      zone.key = "x#{zone.x}/y#{zone.z}"
+
+      if loadedZones[zone.key]
+        if loadedZones[zone.key].loading
+          loadedZones[zone.key].toRender.push {relativePosition, chunkPosition, chunkPositionRaw}
+        else
+          renderChunk loadedZones[zone.key].ctx, relativePosition, chunkPosition, chunkPositionRaw
+      else
+        loadedZones[zone.key] =
+          x: zone.x
+          z: zone.z
+          loading: yes
+          toRender: [{relativePosition, chunkPosition, chunkPositionRaw}]
+
+        hmImg = new Image()
+        hmImg.onload = ->
+          loadedZones[zone.key].canvas = canvas = document.createElement 'canvas'
+          canvas.width = zones.width
+          canvas.height = zones.height
+          loadedZones[zone.key].ctx = ctx = canvas.getContext '2d'
+          ctx.drawImage this, 0, 0
+          loadedZones[zone.key].loading = no
+          
+          for chunk in loadedZones[zone.key].toRender
+            {relativePosition, chunkPosition, chunkPositionRaw} = chunk
+            renderChunk ctx, relativePosition, chunkPosition, chunkPositionRaw
+          loadedZones[zone.key].toRender = []
+          
+        hmImg.src = "#{mapDir}/zones/#{zone.key}.png"
 
     worker.addEventListener 'message', (e) ->
       switch e.data.event
