@@ -27,17 +27,10 @@ map = fse.readJsonSync jsonPath
 
 log "using map info #{JSON.stringify map}"
 
-calculateChunk = (voxels, chunkSize) ->
-  qty = Math.ceil voxels / chunkSize
-  {
-    start: -(Math.ceil((qty - 1) / 2))
-    end: Math.floor((qty - 1) / 2)
-  }
+zoneDir = "#{mapPath}/zones"
 
-chunkDir = "#{mapPath}/chunks"
-
-log 'deleting current chunk dir at ', chunkDir
-fse.removeSync chunkDir
+log 'deleting current zone dir at ', zoneDir
+fse.removeSync zoneDir
 
 map.heightmap ?= 'megt90n000fb.img'
 map.cols ?= 1
@@ -45,28 +38,12 @@ map.rows ?= 1
 map.fullwidth = map.width * map.cols
 map.fullheight = map.height * map.rows
 
-center =
-  x: Math.floor(map.fullwidth / 2)
-  y: Math.floor(map.fullheight / 2)
-
-log {center}
-
-{chunkSize} = map.generateOptions
-
-xChunks = calculateChunk map.fullwidth, chunkSize
-yChunks = calculateChunk map.fullheight, chunkSize
-
-log {yChunks, xChunks}
-
-chunkArray =
-  y: [yChunks.start..yChunks.end]
-  x: [xChunks.start..xChunks.end]
-
-chunksPerFile =
-  y: Math.ceil(chunkArray.y.length / map.rows)
-  x: Math.ceil(chunkArray.x.length / map.cols)
-
-log {chunksPerFile}
+{zones} = map.generateOptions
+zones ?= {}
+zones.cols ?= 1
+zones.rows ?= 1
+zones.width = Math.round(map.width / zones.cols)
+zones.height = Math.round(map.height / zones.rows)
 
 log "reading heightmap from #{map.rows} rows and #{map.cols} cols"
 
@@ -93,28 +70,19 @@ readFile = (row, col) ->
   buffer = new Buffer totalSize
   fse.readSync fd, buffer, 0, totalSize, 0
   
-  chunks = []
+  createZone = (zx, zy) ->
+    log 'creating zone png for X', zx, ', Y', zy
 
-  section =
-    y:
-      start: row * chunksPerFile.y
-    x:
-      start: col * chunksPerFile.x
-
-  section.y.end = section.y.start + chunksPerFile.y
-  section.x.end = section.x.start + chunksPerFile.x
-
-  createChunk = (cx, cy) ->
-    log 'creating chunk png for X', cx, ', Y', cy
-
-    chunk = new PNG width: chunkSize, height: chunkSize
+    zone = new PNG width: zones.width, height: zones.height
 
     start =
-      x: center.x + (cx * chunkSize) - (col * map.width)
-      y: center.y + (cy * chunkSize) - (row * map.height)
+      x: ((zx - (col * zones.cols)) * zones.width)
+      y: ((zy - (row * zones.rows)) * zones.height)
 
-    for y in [(start.y)...(start.y + chunkSize)]
-      for x in [(start.x)...(start.x + chunkSize)]
+    log start
+
+    for y in [(start.y)...(start.y + zones.height)]
+      for x in [(start.x)...(start.x + zones.width)]
         bufPosition = ((map.width * bytesPerPixel) * y) + (x * bytesPerPixel)
         original = buffer.readInt16BE(bufPosition)
         # making it unsigned
@@ -125,15 +93,14 @@ readFile = (row, col) ->
         hex = Math.round(scaled * maxColor)
         
         # << = left shift operator
-        idx = (chunk.width * (y - start.y) + (x - start.x)) << 2
-        # same color in all 3 channels
-        for offset in [0..2]
-          chunk.data[idx + offset] = hex
-        # alpha ff for all
-        chunk.data[idx + 3] = 0xff
+        idx = (zone.width * (y - start.y) + (x - start.x)) << 2
+        # red channel only
+        zone.data[idx] = hex
+        # alpha ff
+        zone.data[idx + 3] = 0xff
 
-    pngDir = "#{chunkDir}/x#{cx}"
-    pngPath = "#{pngDir}/y#{cy}.png"
+    pngDir = "#{zoneDir}/x#{zx}"
+    pngPath = "#{pngDir}/y#{zy}.png"
 
     fse.mkdirsSync pngDir
     
@@ -142,14 +109,14 @@ readFile = (row, col) ->
     wStream = fse.createWriteStream pngPath
 
     wStream.on 'finish', ->
-      cx++
+      zx++
       log 'next x'
-      if cx > chunkArray.x[section.x.end - 1]
-        cx = chunkArray.x[section.x.start]
-        cy++
+      if zx >= (zones.cols * (col + 1))
+        zx = col * zones.cols
+        zy++
         log 'next y'
-      if cy <= chunkArray.y[section.y.end - 1]
-        createChunk cx, cy
+      if zy < (zones.rows * (row + 1))
+        createZone zx, zy
       else
         log 'next file x'
         col++
@@ -164,9 +131,9 @@ readFile = (row, col) ->
           console.log time
           log 'THE END'
 
-    chunk.pack().pipe wStream
+    zone.pack().pipe wStream
 
-  createChunk chunkArray.x[section.x.start], chunkArray.y[section.y.start]
+  createZone col * zones.cols, row * zones.rows
 
 readFile row, col
 

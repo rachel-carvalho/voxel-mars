@@ -3,5 +3,6 @@ node_modules
 public/maps/*/chunks
 public/maps/*/heightmap
 public/maps/*/*.img
+public/maps/*/zones
 .settings
 .c9revisions

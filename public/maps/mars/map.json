@@ -4,8 +4,8 @@
   "height": 5632,
   "metersPerPixel": 463,
   "deltaY": 29457,
-  "cols": 1,
-  "rows": 1,
+  "cols": 2,
+  "rows": 2,
   "pointsOfInterest": {
     "olympusMons": {
       "name": "Olympus Mons",
@@ -20,6 +20,10 @@
   },
   "generateOptions": {
     "startPosition": "olympusMons",
+    "zones": {
+      "cols": 4,
+      "rows": 2
+    },
     "chunkSize": 32
   }
 }
