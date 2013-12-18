@@ -24,10 +24,19 @@
       },
       "x": 2676,
       "y": 1728
+    },
+    "lowestPointInHellas": {
+      "name": "Lowest point in Hellas Basin",
+      "nasaFile": {
+        "x": 0,
+        "y": 2
+      },
+      "x": 7961,
+      "y": 4212
     }
   },
   "generateOptions": {
-    "startPosition": "olympusMons",
+    "startPosition": "lowestPointInHellas",
     "zones": {
       "cols": 4,
       "rows": 2
