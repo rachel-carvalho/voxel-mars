@@ -59,6 +59,8 @@ $ ->
 
     if hashParams.lat and hashParams.lng
       map.center = fromLatLng hashParams
+      window.location.hash = ''
+      hashParams = {}
 
     {chunkSize, zones} = map.generateOptions
     zones ?= {}
