@@ -21,7 +21,7 @@ generateChunk = (info) ->
       for x in [0...size]
         imgIdx = (size * z + x) << 2
         data = heightMap[imgIdx]
-        height = Math.ceil((data / 255) * heightScale)
+        height = Math.ceil((data / 255) * heightScale) + 1
 
         if height > startY
           for y in [startY..height]
