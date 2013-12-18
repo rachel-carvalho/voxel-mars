@@ -12,11 +12,23 @@ worker = app.worker = new Worker '/js/worker.js'
 mapDir = 'maps/mars'
 
 $ ->
+  getSearchParams = ->
+    params = {}
+    for param in window.location.search.substring(1).split('&')
+      if param
+        parts = param.split '='
+        params[parts[0]] = parts.splice(1).join '='
+    params
+
+  searchParams = getSearchParams()
+
   $.getJSON "#{mapDir}/map.json", (map) ->
     app.map = map
     map.heightScale = map.deltaY / map.metersPerPixel
     # all heights are added one to avoid holes at altitude 0
     map.heightOffset = 1
+    # player is one voxel on top of the floor
+    map.playerOffset = 1
     # TODO: calculate center from chosen POI
     map.cols ?= 1
     map.rows ?= 1
@@ -32,6 +44,21 @@ $ ->
       if poi
         map.center.x = ((poi.nasaFile?.x || 0) * map.width) + poi.x
         map.center.y = ((poi.nasaFile?.y || 0) * map.height) + poi.y
+
+    fromLatLng = (latLng) ->
+      {lat, lng} = latLng
+      lat = parseFloat lat
+      lng = parseFloat lng
+      lat += 360 if lat < 0
+
+      pos =
+        x: lat * map.pixelsPerDegree
+        y: -(lng * map.pixelsPerDegree) + map.latLngCenterInPx.lng
+
+      pos
+
+    if searchParams.lat and searchParams.lng
+      map.center = fromLatLng searchParams
 
     {chunkSize, zones} = map.generateOptions
     zones ?= {}
@@ -85,12 +112,10 @@ $ ->
         left: (pos.x / map.fullwidth) * img.width()
 
     toLatLngAlt = (pos) ->
-      # player is one voxel on top of the floor
-      playerOffset = 1
       latLngAlt =
         lat: pos.x / map.pixelsPerDegree
         lng: -((pos.z - map.latLngCenterInPx.lng) / map.pixelsPerDegree)
-        alt: ((pos.y - map.heightOffset - playerOffset) * map.metersPerPixel) - map.datum
+        alt: ((pos.y - map.heightOffset - map.playerOffset) * map.metersPerPixel) - map.datum
       latLngAlt.lat -= 360 if latLngAlt.lat > 180
 
       latLngAlt
