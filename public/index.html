@@ -32,6 +32,9 @@
         color: #fff;
         padding: 3px 5px;
       }
+      #permalink {
+        color: #fff;
+      }
     </style>
     <script src="/js/zepto-1.1.1.min.js"></script>
     <script src="/js/index.js"></script>
@@ -42,12 +45,13 @@
       <img src="/maps/mars/midmap.jpg">
     </div>
     <div id="position">
+      <label>ALT:</label>
+      <span id="alt">123</span>m
       <label>LAT:</label>
       <span id="lat">123</span>
       <label>LNG:</label>
       <span id="lng">123</span>
-      <label>ALT:</label>
-      <span id="alt">123</span>m
+      <a id="permalink">{permalink}</a>
     </div>
   </body>
 </html>

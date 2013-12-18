@@ -12,15 +12,15 @@ worker = app.worker = new Worker '/js/worker.js'
 mapDir = 'maps/mars'
 
 $ ->
-  getSearchParams = ->
+  getHashParams = ->
     params = {}
-    for param in window.location.search.substring(1).split('&')
+    for param in window.location.hash.substring(1).split('&')
       if param
         parts = param.split '='
         params[parts[0]] = parts.splice(1).join '='
     params
 
-  searchParams = getSearchParams()
+  hashParams = getHashParams()
 
   $.getJSON "#{mapDir}/map.json", (map) ->
     app.map = map
@@ -57,8 +57,8 @@ $ ->
 
       pos
 
-    if searchParams.lat and searchParams.lng
-      map.center = fromLatLng searchParams
+    if hashParams.lat and hashParams.lng
+      map.center = fromLatLng hashParams
 
     {chunkSize, zones} = map.generateOptions
     zones ?= {}
@@ -103,6 +103,7 @@ $ ->
     lat = $('#lat')
     lng = $('#lng')
     alt = $('#alt')
+    permalink = $('#permalink')
 
     position = null
 
@@ -125,6 +126,7 @@ $ ->
       lat.text pos.lat.toFixed 7
       lng.text pos.lng.toFixed 7
       alt.text pos.alt
+      permalink.attr 'href', "#lat=#{pos.lat}&lng=#{pos.lng}"
       positionDiv.show()
 
     game.voxelRegion.on 'change', (pos) ->
