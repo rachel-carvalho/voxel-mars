@@ -9,13 +9,21 @@
   "pointsOfInterest": {
     "olympusMons": {
       "name": "Olympus Mons",
-      "x": 7319,
-      "y": 2443
+      "nasaFile": {
+        "x": 2,
+        "y": 1
+      },
+      "x": 5958,
+      "y": 3412
     },
     "noctis": {
       "name": "Noctis Labyrinthus",
-      "x": 8403,
-      "y": 3067
+      "nasaFile": {
+        "x": 3,
+        "y": 2
+      },
+      "x": 2676,
+      "y": 1728
     }
   },
   "generateOptions": {

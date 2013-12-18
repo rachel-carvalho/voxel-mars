@@ -21,6 +21,11 @@ $ ->
     map.fullwidth = map.width * map.cols
     map.fullheight = map.height * map.rows
     map.center = {x: map.fullwidth / 2, y: map.fullheight / 2}
+    if map.generateOptions.startPosition
+      poi = map.pointsOfInterest[map.generateOptions.startPosition]
+      if poi
+        map.center.x = ((poi.nasaFile?.x || 0) * map.width) + poi.x
+        map.center.y = ((poi.nasaFile?.y || 0) * map.height) + poi.y
 
     {chunkSize, zones} = map.generateOptions
     zones ?= {}
@@ -29,8 +34,7 @@ $ ->
     zones.width = Math.round(map.width / zones.cols)
     zones.height = Math.round(map.height / zones.rows)
 
-    origin = [map.fullwidth / 2 / chunkSize, 0, map.fullheight / 2 / chunkSize]
-    # origin = [5958 / chunkSize,0,3412 / chunkSize]
+    origin = [map.center.x / chunkSize, 0, map.center.y / chunkSize]
 
     game = app.game = vengine
       materials: ['mars']
@@ -91,8 +95,6 @@ $ ->
 
       {zone, relativePosition}
 
-    loadedZones = {}
-
     renderChunk = (ctx, imgPosition, chunkPosition, chunkPositionRaw) ->
       data = ctx.getImageData(imgPosition.x, imgPosition.z, chunkSize, chunkSize).data
       worker.postMessage 
@@ -105,6 +107,8 @@ $ ->
           heightScale: map.heightScale
         ,
         [data.buffer]
+
+    loadedZones = {}
 
     game.voxels.on 'missingChunk', (chunkPositionRaw) ->
       chunkPosition = x: chunkPositionRaw[0], y: chunkPositionRaw[1], z: chunkPositionRaw[2]
