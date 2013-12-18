@@ -30,7 +30,7 @@ $ ->
     zones.height = Math.round(map.height / zones.rows)
 
     origin = [map.fullwidth / 2 / chunkSize, 0, map.fullheight / 2 / chunkSize]
-    origin = [5958 / chunkSize,0,3412 / chunkSize]
+    # origin = [5958 / chunkSize,0,3412 / chunkSize]
 
     game = app.game = vengine
       materials: ['mars']
@@ -64,8 +64,8 @@ $ ->
 
     updateMidmap = (pos) ->
       pointer.css
-        top: ((map.center.y + Math.floor pos.z) / map.fullheight) * img.height()
-        left: ((map.center.x + Math.floor pos.x) / map.fullwidth) * img.width()
+        top: (pos.z / map.fullheight) * img.height()
+        left: (pos.x / map.fullwidth) * img.width()
 
     game.voxelRegion.on 'change', (pos) ->
       updateMidmap x: pos[0], y: pos[1], z: pos[2]
