@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <style type="text/css">
       * { box-sizing: border-box; }
-      html, body { margin: 0; padding: 0; }
+      html, body { margin: 0; padding: 0; font-family: sans-serif; }
       #pointer {
         position: absolute;
         top: 0;
@@ -22,6 +22,16 @@
         display: none;
       }
       #mid-map img {width: 100%;}
+      #position {
+        display: none;
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+        font-family: monospace;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        padding: 3px 5px;
+      }
     </style>
     <script src="/js/zepto-1.1.1.min.js"></script>
     <script src="/js/index.js"></script>
@@ -30,6 +40,14 @@
     <div id="mid-map">
       <div id="pointer"></div>
       <img src="/maps/mars/midmap.jpg">
+    </div>
+    <div id="position">
+      <label>LAT:</label>
+      <span id="lat">123</span>
+      <label>LNG:</label>
+      <span id="lng">123</span>
+      <label>ALT:</label>
+      <span id="alt">123</span>m
     </div>
   </body>
 </html>

@@ -15,12 +15,18 @@ $ ->
   $.getJSON "#{mapDir}/map.json", (map) ->
     app.map = map
     map.heightScale = map.deltaY / map.metersPerPixel
+    # all heights are added one to avoid holes at altitude 0
+    map.heightOffset = 1
     # TODO: calculate center from chosen POI
     map.cols ?= 1
     map.rows ?= 1
     map.fullwidth = map.width * map.cols
     map.fullheight = map.height * map.rows
     map.center = {x: map.fullwidth / 2, y: map.fullheight / 2}
+    map.latLngCenterInPx =
+      lat: 0
+      lng: map.center.y
+
     if map.generateOptions.startPosition
       poi = map.pointsOfInterest[map.generateOptions.startPosition]
       if poi
@@ -45,12 +51,13 @@ $ ->
       worldOrigin: origin
       controls: {discreteFire: true}
       skyColor: 0xFA8072
+      playerHeight: 3
 
     game.appendTo(document.body)
 
     avatar = vplayer(game)('astronaut.png')
     avatar.possess()
-    avatar.position.set(origin[0] * chunkSize, 100, origin[2] * chunkSize)
+    avatar.position.set(origin[0] * chunkSize, 67, origin[2] * chunkSize)
     avatar.toggle()
 
     target = game.controls.target()
@@ -65,20 +72,46 @@ $ ->
     div = $('#mid-map')
     pointer = $('#pointer')
     img = $('#mid-map img')
+    positionDiv = $('#position')
+    lat = $('#lat')
+    lng = $('#lng')
+    alt = $('#alt')
+
+    position = null
 
     updateMidmap = (pos) ->
       pointer.css
         top: (pos.z / map.fullheight) * img.height()
         left: (pos.x / map.fullwidth) * img.width()
 
+    toLatLngAlt = (pos) ->
+      # player is one voxel on top of the floor
+      playerOffset = 1
+      latLngAlt =
+        lat: pos.x / map.pixelsPerDegree
+        lng: -((pos.z - map.latLngCenterInPx.lng) / map.pixelsPerDegree)
+        alt: ((pos.y - map.heightOffset - playerOffset) * map.metersPerPixel) - map.datum
+      latLngAlt.lat -= 360 if latLngAlt.lat > 180
+
+      latLngAlt
+
+    updateLatLngAlt = (pos) ->
+      pos = toLatLngAlt pos
+      lat.text pos.lat.toFixed 7
+      lng.text pos.lng.toFixed 7
+      alt.text pos.alt
+      positionDiv.show()
+
     game.voxelRegion.on 'change', (pos) ->
-      updateMidmap x: pos[0], y: pos[1], z: pos[2]
+      position = x: pos[0], y: pos[1], z: pos[2]
+      updateMidmap position
+      updateLatLngAlt position
 
     $(window).keydown (ev) ->
       if ev.keyCode is 'M'.charCodeAt(0)
         div.toggle()
 
-        updateMidmap target.position
+        updateMidmap position ? target.position
 
     convertChunkToZone = (chunkPosition) ->
       pixelPos = 
@@ -105,6 +138,7 @@ $ ->
           positionRaw: chunkPositionRaw
           size: chunkSize
           heightScale: map.heightScale
+          heightOffset: map.heightOffset
         ,
         [data.buffer]
 

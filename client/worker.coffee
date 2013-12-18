@@ -11,7 +11,7 @@ self.addEventListener 'message', (e) ->
       self.postMessage msg, [msg.chunk.voxels.buffer]
 
 generateChunk = (info) ->
-  {heightMap, position, size, heightScale} = info
+  {heightMap, position, size, heightScale, heightOffset} = info
   chunk = new Int8Array(size * size * size)
 
   if position.y > -1
@@ -21,7 +21,7 @@ generateChunk = (info) ->
       for x in [0...size]
         imgIdx = (size * z + x) << 2
         data = heightMap[imgIdx]
-        height = Math.ceil((data / 255) * heightScale) + 1
+        height = Math.ceil((data / 255) * heightScale) + heightOffset
 
         if height > startY
           for y in [startY..height]
