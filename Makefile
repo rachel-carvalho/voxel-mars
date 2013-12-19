@@ -31,4 +31,7 @@ download-map:
 	curl $(NASA_URL)/megt44s180hb.img -o $(MAP_PATH)/x2y3.img
 	curl $(NASA_URL)/megt44s270hb.img -o $(MAP_PATH)/x3y3.img
 
-.PHONY: build, upload, deploy, upload-dry, download-map
+slice-map:
+	coffee ./slice.coffee
+
+.PHONY: build, upload, deploy, upload-dry, download-map, slice-map
