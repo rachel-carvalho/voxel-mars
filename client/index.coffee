@@ -83,7 +83,7 @@ $ ->
     skyColor: 0xFA8072
     playerHeight: 3
 
-  game.appendTo(document.body)
+  game.appendTo $('#world')[0]
 
   avatar = vplayer(game)('astronaut.png')
   avatar.possess()
