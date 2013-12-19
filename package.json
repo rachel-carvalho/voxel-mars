@@ -8,7 +8,6 @@
     "url": "https://github.com/rachel-carvalho/voxel-mars.git"
   },
   "dependencies": {
-    "domnode": "https://github.com/maxogden/domnode/tarball/master",
     "voxel": "0.3.1",
     "voxel-engine": "0.19.0",
     "voxel-player": "0.1.0",
