@@ -41,16 +41,27 @@
       #position {
         display: none;
         position: fixed;
-        bottom: 5px;
+        top: 5px;
         right: 5px;
         font-family: monospace;
+      }
+      
+      #position .item {
+        display: inline-block;
         background-color: rgba(0, 0, 0, 0.5);
         color: #fff;
-        padding: 3px 5px;
+        padding: 3px 7px;
+        margin-left: -4px;
       }
+      
+      #position .item span {font-weight: bold;}
+      
       #permalink {
         color: #fff;
+        text-decoration: none;
       }
+      
+      #permalink:hover {text-decoration: underline;}
     </style>
     <script src="/js/zepto-1.1.1.min.js"></script>
     <script src="/js/index.js"></script>
@@ -70,13 +81,10 @@
       <img src="/maps/mars/midmap.jpg">
     </div>
     <div id="position">
-      <label>ALT:</label>
-      <span id="alt">123</span>m
-      <label>LAT:</label>
-      <span id="lat">123</span>
-      <label>LNG:</label>
-      <span id="lng">123</span>
-      <a id="permalink">{permalink}</a>
+      <span class="item"><a id="permalink">[LINK]</a></span>
+      <span class="item">ALT: <span id="alt">123</span>m</span>
+      <span class="item">LAT: <span id="lat">123</span></span>
+      <span class="item">LNG: <span id="lng">123</span></span>
     </div>
     <div id="world"></div>
   </body>
