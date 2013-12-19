@@ -1,15 +1,7 @@
 express = require 'express'
-fs = require 'fs'
-{PNG} = require 'pngjs'
 browserify = require 'browserify-middleware'
 
-global.log = console.log
-
 app = express()
-
-app.set 'view engine', 'jade'
-
-app.locals require('./locals')
 
 app.use express.static "#{__dirname}/public"
 
