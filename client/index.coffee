@@ -24,7 +24,8 @@ $ ->
 
   $.getJSON "#{mapDir}/map.json", (map) ->
     app.map = map
-    map.heightScale = map.deltaY / map.metersPerPixel
+    map.heightScale ?= map.deltaY / map.metersPerPixel
+    map.metersPerVoxelVertical = map.deltaY / map.heightScale
     # all heights are added one to avoid holes at altitude 0
     map.heightOffset = 1
     # player is one voxel on top of the floor
@@ -118,7 +119,7 @@ $ ->
       latLngAlt =
         lat: pos.x / map.pixelsPerDegree
         lng: -((pos.z - map.latLngCenterInPx.lng) / map.pixelsPerDegree)
-        alt: ((pos.y - map.heightOffset - map.playerOffset) * map.metersPerPixel) - map.datum
+        alt: ((pos.y - map.heightOffset - map.playerOffset) * map.metersPerVoxelVertical) - map.datum
       latLngAlt.lat -= 360 if latLngAlt.lat > 180
 
       latLngAlt
@@ -127,7 +128,7 @@ $ ->
       pos = toLatLngAlt pos
       lat.text pos.lat.toFixed 7
       lng.text pos.lng.toFixed 7
-      alt.text pos.alt
+      alt.text pos.alt.toFixed 2
       permalink.attr 'href', "#lat=#{pos.lat}&lng=#{pos.lng}"
       positionDiv.show()
 
