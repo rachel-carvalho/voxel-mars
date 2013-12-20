@@ -34,4 +34,7 @@ download-map:
 slice-map:
 	coffee ./slice.coffee
 
-.PHONY: build, upload, deploy, upload-dry, download-map, slice-map
+clean:
+	rm ./public/js/index.js ./public/js/worker.js
+
+.PHONY: build, upload, deploy, upload-dry, download-map, slice-map, clean
