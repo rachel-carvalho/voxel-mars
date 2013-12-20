@@ -37,8 +37,8 @@ $ ->
   map.fullheight = map.height * map.rows
   map.center = {x: map.fullwidth / 2, y: map.fullheight / 2}
   map.latLngCenterInPx =
-    lat: 0
-    lng: map.center.y
+    lat: map.center.y
+    lng: 0
 
   if map.generateOptions.startPosition
     poi = map.pointsOfInterest[map.generateOptions.startPosition]
@@ -50,11 +50,11 @@ $ ->
     {lat, lng} = latLng
     lat = parseFloat lat
     lng = parseFloat lng
-    lat += 360 if lat < 0
+    lng += 360 if lng < 0
 
     pos =
-      x: lat * map.pixelsPerDegree
-      y: -(lng * map.pixelsPerDegree) + map.latLngCenterInPx.lng
+      x: lng * map.pixelsPerDegree
+      y: -(lat * map.pixelsPerDegree) + map.latLngCenterInPx.lat
 
     pos
 
@@ -117,10 +117,10 @@ $ ->
 
   toLatLngAlt = (pos) ->
     latLngAlt =
-      lat: pos.x / map.pixelsPerDegree
-      lng: -((pos.z - map.latLngCenterInPx.lng) / map.pixelsPerDegree)
+      lat: -((pos.z - map.latLngCenterInPx.lat) / map.pixelsPerDegree)
+      lng: pos.x / map.pixelsPerDegree
       alt: ((pos.y - map.heightOffset - map.playerOffset) * map.metersPerVoxelVertical) - map.datum
-    latLngAlt.lat -= 360 if latLngAlt.lat > 180
+    latLngAlt.lng -= 360 if latLngAlt.lng > 180
 
     latLngAlt
 
