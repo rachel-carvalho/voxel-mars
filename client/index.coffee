@@ -78,7 +78,7 @@ $ ->
     materialFlatColor: no
     generateChunks: no
     chunkSize: chunkSize
-    chunkDistance: 2
+    chunkDistance: 3
     worldOrigin: origin
     controls: {discreteFire: true}
     skyColor: 0xFA8072
@@ -182,7 +182,7 @@ $ ->
 
     game.paused = no
 
-    position = null
+  position = null
 
   game.on 'tick', ->
     vwalk.render(target.playerSkin)
