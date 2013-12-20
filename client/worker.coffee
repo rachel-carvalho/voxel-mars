@@ -1,3 +1,5 @@
+{getHeightFromColor} = require './common.coffee'
+
 self.addEventListener 'message', (e) ->
   switch e.data.cmd
     when 'generateChunk'
@@ -33,7 +35,7 @@ generateChunk = (info) ->
       for x in [0...size]
         imgIdx = (size * z + x) << 2
         data = heightMap[imgIdx]
-        height = Math.ceil((data / 255) * heightScale) + heightOffset
+        height = getHeightFromColor data, heightScale, heightOffset
         endY = startY + size
 
         if endY > height >= startY

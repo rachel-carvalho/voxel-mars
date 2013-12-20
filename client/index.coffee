@@ -5,6 +5,7 @@ vengine = require 'voxel-engine'
 vplayer = require 'voxel-player'
 vwalk = require 'voxel-walk'
 map = require '../public/maps/mars/map.json'
+{getHeightFromColor} = require './common.coffee'
 
 window.app = {}
 
@@ -70,7 +71,7 @@ $ ->
   zones.width = Math.round(map.width / zones.cols)
   zones.height = Math.round(map.height / zones.rows)
 
-  origin = [map.center.x / chunkSize, 0, map.center.y / chunkSize]
+  origin = [Math.floor(map.center.x / chunkSize), 0, Math.floor(map.center.y / chunkSize)]
 
   game = app.game = vengine
     materials: ['mars']
@@ -85,12 +86,103 @@ $ ->
 
   game.appendTo $('#world')[0]
 
-  avatar = vplayer(game)('astronaut.png')
-  avatar.possess()
-  avatar.position.set(origin[0] * chunkSize, 67, origin[2] * chunkSize)
-  avatar.toggle()
+  convertChunkToZone = (chunkPosition) ->
+    pixelPos = 
+      x: chunkPosition.x * chunkSize
+      z: chunkPosition.z * chunkSize
+    
+    zone =
+      x: Math.floor(pixelPos.x / zones.width)
+      z: Math.floor(pixelPos.z / zones.height)
 
-  target = game.controls.target()
+    relativePosition =
+      x: pixelPos.x % zones.width
+      z: pixelPos.z % zones.height
+
+    {zone, relativePosition}
+
+  renderChunk = (ctx, imgPosition, chunkPosition, chunkPositionRaw) ->
+    data = ctx.getImageData(imgPosition.x, imgPosition.z, chunkSize, chunkSize).data
+    chunkInfo =
+      heightMap: data
+      position: chunkPosition
+      positionRaw: chunkPositionRaw
+      size: chunkSize
+      heightScale: map.heightScale
+      heightOffset: map.heightOffset
+
+    worker.postMessage 
+      cmd: 'generateChunk'
+      chunkInfo: chunkInfo
+      ,
+      [data.buffer]
+
+  loadedZones = {}
+
+  onChunkRendered = {}
+
+  loadChunk = (chunkPositionRaw, cb) ->
+    chunkPosition = x: chunkPositionRaw[0], y: chunkPositionRaw[1], z: chunkPositionRaw[2]
+
+    {zone, relativePosition} = convertChunkToZone chunkPosition
+
+    zone.key = "x#{zone.x}/y#{zone.z}"
+
+    if loadedZones[zone.key]
+      if loadedZones[zone.key].loading
+        loadedZones[zone.key].toRender.push {relativePosition, chunkPosition, chunkPositionRaw, cb}
+      else
+        renderChunk loadedZones[zone.key].ctx, relativePosition, chunkPosition, chunkPositionRaw
+    else
+      loadedZones[zone.key] =
+        x: zone.x
+        z: zone.z
+        loading: yes
+        toRender: [{relativePosition, chunkPosition, chunkPositionRaw, cb}]
+
+      hmImg = new Image()
+      hmImg.onload = ->
+        loadedZones[zone.key].canvas = canvas = document.createElement 'canvas'
+        canvas.width = zones.width
+        canvas.height = zones.height
+        loadedZones[zone.key].ctx = ctx = canvas.getContext '2d'
+        ctx.drawImage this, 0, 0
+        loadedZones[zone.key].loading = no
+        
+        for chunk in loadedZones[zone.key].toRender
+          {relativePosition, chunkPosition, chunkPositionRaw} = chunk
+          if typeof chunk.cb == 'function'
+            onChunkRendered["x#{chunkPosition.x}y#{chunkPosition.y}z#{chunkPosition.z}"] = 
+              cb: chunk.cb
+              ctx: ctx
+              relativePosition: relativePosition
+          renderChunk ctx, relativePosition, chunkPosition, chunkPositionRaw
+        loadedZones[zone.key].toRender = []
+        
+      hmImg.src = "#{mapDir}/zones/#{zone.key}.png"
+
+  target = null
+
+  loadChunk origin, (ctx, imgPosition) ->
+    offset = 
+      x: map.center.x - (origin[0] * chunkSize)
+      y: map.center.y - (origin[2] * chunkSize)
+    data = ctx.getImageData(imgPosition.x + offset.x, imgPosition.z + offset.y, 1, 1).data
+    y = 0
+    # only consider first channel, red
+    for color in data by 4
+      y = Math.max y, getHeightFromColor(color, map.heightScale, map.heightOffset)
+
+    avatar = vplayer(game)('astronaut.png')
+    avatar.possess()
+    avatar.position.set(map.center.x + 0.5, y + map.playerOffset, map.center.y + 0.5)
+    avatar.toggle()
+
+    target = game.controls.target()
+
+    game.paused = no
+
+    position = null
 
   game.on 'tick', ->
     vwalk.render(target.playerSkin)
@@ -107,8 +199,6 @@ $ ->
   lng = $('#lng')
   alt = $('#alt')
   permalink = $('#permalink')
-
-  position = null
 
   updateMidmap = (pos) ->
     pointer.css
@@ -143,80 +233,21 @@ $ ->
 
       updateMidmap position ? target.position
 
-  convertChunkToZone = (chunkPosition) ->
-    pixelPos = 
-      x: chunkPosition.x * chunkSize
-      z: chunkPosition.z * chunkSize
-    
-    zone =
-      x: Math.floor(pixelPos.x / zones.width)
-      z: Math.floor(pixelPos.z / zones.height)
-
-    relativePosition =
-      x: pixelPos.x % zones.width
-      z: pixelPos.z % zones.height
-
-    {zone, relativePosition}
-
-  renderChunk = (ctx, imgPosition, chunkPosition, chunkPositionRaw) ->
-    data = ctx.getImageData(imgPosition.x, imgPosition.z, chunkSize, chunkSize).data
-    worker.postMessage 
-      cmd: 'generateChunk'
-      chunkInfo: 
-        heightMap: data
-        position: chunkPosition
-        positionRaw: chunkPositionRaw
-        size: chunkSize
-        heightScale: map.heightScale
-        heightOffset: map.heightOffset
-      ,
-      [data.buffer]
-
-  loadedZones = {}
-
-  game.voxels.on 'missingChunk', (chunkPositionRaw) ->
-    chunkPosition = x: chunkPositionRaw[0], y: chunkPositionRaw[1], z: chunkPositionRaw[2]
-
-    {zone, relativePosition} = convertChunkToZone chunkPosition
-
-    zone.key = "x#{zone.x}/y#{zone.z}"
-
-    if loadedZones[zone.key]
-      if loadedZones[zone.key].loading
-        loadedZones[zone.key].toRender.push {relativePosition, chunkPosition, chunkPositionRaw}
-      else
-        renderChunk loadedZones[zone.key].ctx, relativePosition, chunkPosition, chunkPositionRaw
-    else
-      loadedZones[zone.key] =
-        x: zone.x
-        z: zone.z
-        loading: yes
-        toRender: [{relativePosition, chunkPosition, chunkPositionRaw}]
-
-      hmImg = new Image()
-      hmImg.onload = ->
-        loadedZones[zone.key].canvas = canvas = document.createElement 'canvas'
-        canvas.width = zones.width
-        canvas.height = zones.height
-        loadedZones[zone.key].ctx = ctx = canvas.getContext '2d'
-        ctx.drawImage this, 0, 0
-        loadedZones[zone.key].loading = no
-        
-        for chunk in loadedZones[zone.key].toRender
-          {relativePosition, chunkPosition, chunkPositionRaw} = chunk
-          renderChunk ctx, relativePosition, chunkPosition, chunkPositionRaw
-        loadedZones[zone.key].toRender = []
-        
-      hmImg.src = "#{mapDir}/zones/#{zone.key}.png"
-
-  game.paused = no
+  game.voxels.on 'missingChunk', loadChunk
 
   worker.addEventListener 'message', (e) ->
     switch e.data.event
       when 'log'
-        console.log e.data.msg
+        log e.data.msg
       when 'chunkGenerated'
+        key = "x#{e.data.chunk.position[0]}y#{e.data.chunk.position[1]}z#{e.data.chunk.position[2]}"
+
         game.showChunk
           position: e.data.chunk.position
           dims: [chunkSize, chunkSize, chunkSize]
           voxels: e.data.chunk.voxels
+
+        if onChunkRendered[key]
+          onChunkRendered[key].cb onChunkRendered[key].ctx, onChunkRendered[key].relativePosition
+          onChunkRendered[key] = null
+
