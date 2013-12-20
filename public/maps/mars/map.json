@@ -18,8 +18,8 @@
       "x": 5958,
       "y": 3412
     },
-    "noctis": {
-      "name": "Noctis Labyrinthus",
+    "vallesMarineris": {
+      "name": "Valles Marineris",
       "nasaFile": {
         "x": 3,
         "y": 2
@@ -38,7 +38,7 @@
     }
   },
   "generateOptions": {
-    "startPosition": "lowestPointInHellas",
+    "startPosition": "vallesMarineris",
     "zones": {
       "cols": 4,
       "rows": 2

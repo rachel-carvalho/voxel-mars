@@ -10,6 +10,18 @@ self.addEventListener 'message', (e) ->
 
       self.postMessage msg, [msg.chunk.voxels.buffer]
 
+log = (msg) ->
+  self.postMessage
+    event: 'log'
+    msg: msg
+
+getChunkIndex = (x, y, z, size) ->
+  xIndex = Math.abs((size + x % size) % size)
+  yIndex = Math.abs((size + y % size) % size)
+  zIndex = Math.abs((size + z % size) % size)
+
+  xIndex + (yIndex * size) + (zIndex * size * size)
+
 generateChunk = (info) ->
   {heightMap, position, size, heightScale, heightOffset} = info
   chunk = new Int8Array(size * size * size)
@@ -22,14 +34,12 @@ generateChunk = (info) ->
         imgIdx = (size * z + x) << 2
         data = heightMap[imgIdx]
         height = Math.ceil((data / 255) * heightScale) + heightOffset
+        endY = startY + size
 
-        if height > startY
-          endY = Math.min height, startY + size - 1
-          for y in [startY..endY]
-            xIndex = Math.abs((size + x % size) % size)
-            yIndex = Math.abs((size + y % size) % size)
-            zIndex = Math.abs((size + z % size) % size)
-        
-            index = xIndex + (yIndex * size) + (zIndex * size * size)
-            chunk[index] = 1
+        if endY > height >= startY
+          chunk[getChunkIndex(x, height, z, size)] = 1
+
+          secondLayer = height - 1
+          if secondLayer >= startY
+            chunk[getChunkIndex(x, secondLayer, z, size)] = 1
   chunk

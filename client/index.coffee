@@ -209,6 +209,8 @@ $ ->
         
       hmImg.src = "#{mapDir}/zones/#{zone.key}.png"
 
+  game.paused = no
+
   worker.addEventListener 'message', (e) ->
     switch e.data.event
       when 'log'
