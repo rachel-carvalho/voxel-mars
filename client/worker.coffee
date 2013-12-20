@@ -24,7 +24,8 @@ generateChunk = (info) ->
         height = Math.ceil((data / 255) * heightScale) + heightOffset
 
         if height > startY
-          for y in [startY..height]
+          endY = Math.min height, startY + size - 1
+          for y in [startY..endY]
             xIndex = Math.abs((size + x % size) % size)
             yIndex = Math.abs((size + y % size) % size)
             zIndex = Math.abs((size + z % size) % size)
