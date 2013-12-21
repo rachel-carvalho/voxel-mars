@@ -4,13 +4,17 @@ self.addEventListener 'message', (e) ->
   switch e.data.cmd
     when 'generateChunk'
       info = e.data.chunkInfo
+      
+      info.heightMap = new Uint8ClampedArray info.heightMap
+
       msg = 
         event: 'chunkGenerated'
         chunk: 
-          voxels: generateChunk info
+          voxels: generateChunk(info).buffer
           position: info.positionRaw
 
-      self.postMessage msg, [msg.chunk.voxels.buffer]
+      
+      self.postMessage msg, [msg.chunk.voxels]
 
 log = (msg) ->
   self.postMessage

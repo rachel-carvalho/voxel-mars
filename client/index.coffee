@@ -103,8 +103,9 @@ $ ->
 
   renderChunk = (ctx, imgPosition, chunkPosition, chunkPositionRaw) ->
     data = ctx.getImageData(imgPosition.x, imgPosition.z, chunkSize, chunkSize).data
+
     chunkInfo =
-      heightMap: data
+      heightMap: data.buffer
       position: chunkPosition
       positionRaw: chunkPositionRaw
       size: chunkSize
@@ -245,7 +246,9 @@ $ ->
         game.showChunk
           position: e.data.chunk.position
           dims: [chunkSize, chunkSize, chunkSize]
-          voxels: e.data.chunk.voxels
+          voxels: new Int8Array e.data.chunk.voxels
+
+          # log e.data.chunk.voxels.length
 
         if onChunkRendered[key]
           onChunkRendered[key].cb onChunkRendered[key].ctx, onChunkRendered[key].relativePosition
