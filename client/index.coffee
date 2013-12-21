@@ -36,16 +36,16 @@ $ ->
   map.rows ?= 1
   map.fullwidth = map.width * map.cols
   map.fullheight = map.height * map.rows
-  map.center = {x: map.fullwidth / 2, y: map.fullheight / 2}
+  map.center = {x: map.fullwidth / 2, z: map.fullheight / 2}
   map.latLngCenterInPx =
-    lat: map.center.y
+    lat: map.center.z
     lng: 0
 
   if map.generateOptions.startPosition
     poi = map.pointsOfInterest[map.generateOptions.startPosition]
     if poi
       map.center.x = ((poi.nasaFile?.x || 0) * map.width) + poi.x
-      map.center.y = ((poi.nasaFile?.y || 0) * map.height) + poi.y
+      map.center.z = ((poi.nasaFile?.y || 0) * map.height) + poi.y
 
   fromLatLng = (latLng) ->
     {lat, lng} = latLng
@@ -55,7 +55,7 @@ $ ->
 
     pos =
       x: lng * map.pixelsPerDegree
-      y: -(lat * map.pixelsPerDegree) + map.latLngCenterInPx.lat
+      z: -(lat * map.pixelsPerDegree) + map.latLngCenterInPx.lat
 
     pos
 
@@ -71,7 +71,7 @@ $ ->
   zones.width = Math.round(map.width / zones.cols)
   zones.height = Math.round(map.height / zones.rows)
 
-  origin = [Math.floor(map.center.x / chunkSize), 0, Math.floor(map.center.y / chunkSize)]
+  origin = [Math.floor(map.center.x / chunkSize), 0, Math.floor(map.center.z / chunkSize)]
 
   game = app.game = vengine
     materials: ['mars']
@@ -101,8 +101,14 @@ $ ->
 
     {zone, relativePosition}
 
-  renderChunk = (ctx, imgPosition, chunkPosition, chunkPositionRaw) ->
-    data = ctx.getImageData(imgPosition.x, imgPosition.z, chunkSize, chunkSize).data
+  onChunkRendered = {}
+
+  renderChunk = (ctx, relativePosition, chunkPosition, chunkPositionRaw, cb) ->
+    if typeof cb == 'function'
+      key = "x#{chunkPosition.x}y#{chunkPosition.y}z#{chunkPosition.z}"
+      onChunkRendered[key] = {cb, ctx, relativePosition}
+
+    data = ctx.getImageData(relativePosition.x, relativePosition.z, chunkSize, chunkSize).data
 
     chunkInfo =
       heightMap: data.buffer
@@ -120,8 +126,6 @@ $ ->
 
   loadedZones = {}
 
-  onChunkRendered = {}
-
   loadChunk = (chunkPositionRaw, cb) ->
     chunkPosition = x: chunkPositionRaw[0], y: chunkPositionRaw[1], z: chunkPositionRaw[2]
 
@@ -133,7 +137,9 @@ $ ->
       if loadedZones[zone.key].loading
         loadedZones[zone.key].toRender.push {relativePosition, chunkPosition, chunkPositionRaw, cb}
       else
-        renderChunk loadedZones[zone.key].ctx, relativePosition, chunkPosition, chunkPositionRaw
+        key = "x#{chunkPosition.x}y#{chunkPosition.y}z#{chunkPosition.z}"
+        {ctx} = loadedZones[zone.key]
+        renderChunk ctx, relativePosition, chunkPosition, chunkPositionRaw, cb
     else
       loadedZones[zone.key] =
         x: zone.x
@@ -151,37 +157,44 @@ $ ->
         loadedZones[zone.key].loading = no
         
         for chunk in loadedZones[zone.key].toRender
-          {relativePosition, chunkPosition, chunkPositionRaw} = chunk
-          if typeof chunk.cb == 'function'
-            onChunkRendered["x#{chunkPosition.x}y#{chunkPosition.y}z#{chunkPosition.z}"] = 
-              cb: chunk.cb
-              ctx: ctx
-              relativePosition: relativePosition
-          renderChunk ctx, relativePosition, chunkPosition, chunkPositionRaw
+          {relativePosition, chunkPosition, chunkPositionRaw, cb} = chunk
+          renderChunk ctx, relativePosition, chunkPosition, chunkPositionRaw, cb
         loadedZones[zone.key].toRender = []
         
       hmImg.src = "#{mapDir}/zones/#{zone.key}.png"
 
   target = null
 
-  loadChunk origin, (ctx, imgPosition) ->
-    offset = 
-      x: map.center.x - (origin[0] * chunkSize)
-      y: map.center.y - (origin[2] * chunkSize)
-    data = ctx.getImageData(imgPosition.x + offset.x, imgPosition.z + offset.y, 1, 1).data
-    y = 0
-    # only consider first channel, red
-    for color in data by 4
-      y = Math.max y, getHeightFromColor(color, map.heightScale, map.heightOffset)
-
+  startGame = ->
     avatar = vplayer(game)('astronaut.png')
     avatar.possess()
-    avatar.position.set(map.center.x + 0.5, y + map.playerOffset, map.center.y + 0.5)
+    avatar.position.set(map.center.x + 0.5, map.center.y + map.playerOffset, map.center.z + 0.5)
     avatar.toggle()
 
     target = game.controls.target()
 
     game.paused = no
+
+  loadChunk origin, (ctx, imgPosition) ->
+    offset = 
+      x: map.center.x - (origin[0] * chunkSize)
+      z: map.center.z - (origin[2] * chunkSize)
+    data = ctx.getImageData(imgPosition.x + offset.x, imgPosition.z + offset.z, 1, 1).data
+
+    map.center.y = 0
+    # only consider first channel, red
+    for color in data by 4
+      map.center.y = Math.max map.center.y, getHeightFromColor(color, map.heightScale, map.heightOffset)
+
+    chunkY = Math.floor(map.center.y / chunkSize)
+
+    if chunkY == 0
+      startGame()
+    else
+      origin[1] = chunkY
+      loadChunk origin, startGame
+
+    
 
   position = null
 
@@ -243,12 +256,12 @@ $ ->
       when 'chunkGenerated'
         key = "x#{e.data.chunk.position[0]}y#{e.data.chunk.position[1]}z#{e.data.chunk.position[2]}"
 
-        game.showChunk
+        chunk =
           position: e.data.chunk.position
           dims: [chunkSize, chunkSize, chunkSize]
           voxels: new Int8Array e.data.chunk.voxels
 
-          # log e.data.chunk.voxels.length
+        game.showChunk chunk
 
         if onChunkRendered[key]
           onChunkRendered[key].cb onChunkRendered[key].ctx, onChunkRendered[key].relativePosition
