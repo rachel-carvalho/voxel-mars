@@ -12,7 +12,6 @@ self.addEventListener 'message', (e) ->
         chunk: 
           voxels: generateChunk(info).buffer
           position: info.positionRaw
-
       
       self.postMessage msg, [msg.chunk.voxels]
 

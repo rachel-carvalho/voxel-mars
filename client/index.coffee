@@ -194,8 +194,6 @@ $ ->
       origin[1] = chunkY
       loadChunk origin, startGame
 
-    
-
   position = null
 
   game.on 'tick', ->
@@ -206,7 +204,8 @@ $ ->
     else vwalk.startWalking()
 
   div = $('#mid-map')
-  pointer = $('#pointer')
+  vertical = $('#vertical')
+  horizontal = $('#horizontal')
   img = $('#mid-map img')
   positionDiv = $('#position')
   lat = $('#lat')
@@ -215,9 +214,14 @@ $ ->
   permalink = $('#permalink')
 
   updateMidmap = (pos) ->
-    pointer.css
-      top: (pos.z / map.fullheight) * img.height()
-      left: (pos.x / map.fullwidth) * img.width()
+    h = img.height()
+    w = img.width()
+    horizontal.css
+      top: (pos.z / map.fullheight) * h
+      width: w
+    vertical.css
+      left: (pos.x / map.fullwidth) * w
+      height: h
 
   toLatLngAlt = (pos) ->
     latLngAlt =

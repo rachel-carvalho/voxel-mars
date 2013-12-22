@@ -23,16 +23,16 @@
         height: 100%;
       }
 
-      #pointer {
+      #vertical, #horizontal {
         position: absolute;
         top: 0;
         left: 0;
-        width: 5px;
-        height: 5px;
-        background-color: #f00;
-        border: 1px solid #fff;
-        margin-top: -3px;
-        margin-left: -3px;
+      }
+      #vertical {
+        border-left: 1px solid #fff;
+      }
+      #horizontal {
+        border-top: 1px solid #fff;
       }
       #mid-map {
         display: none;
@@ -77,7 +77,8 @@
   </head>
   <body>
     <div id="mid-map">
-      <div id="pointer"></div>
+      <div id="vertical"></div>
+      <div id="horizontal"></div>
       <img src="/maps/mars/midmap.jpg">
     </div>
     <div id="position">
