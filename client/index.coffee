@@ -138,6 +138,9 @@ $ ->
     if chunkPosition.x < 0
       realChunkPosition ?= chunkPositionRaw.slice 0
       realChunkPosition[0] += map.chunks.width
+    else if chunkPosition.x >= map.chunks.width
+      realChunkPosition ?= chunkPositionRaw.slice 0
+      realChunkPosition[0] -= map.chunks.width
 
     if realChunkPosition
       loadChunk realChunkPosition
@@ -258,9 +261,10 @@ $ ->
     {x} = pos
     if x < 0
       pos.x += map.fullwidth
+    else if x >= map.fullwidth
+      pos.x -= map.fullwidth
 
     if x != pos.x
-      log 'wrapping', {x}, pos
       target.moveTo pos.x, pos.y, pos.z
 
   game.voxelRegion.on 'change', (pos) ->
