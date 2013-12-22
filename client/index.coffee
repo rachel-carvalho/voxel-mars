@@ -5,7 +5,7 @@ vengine = require 'voxel-engine'
 vplayer = require 'voxel-player'
 vwalk = require 'voxel-walk'
 map = require '../public/maps/mars/map.json'
-{getHeightFromColor} = require './common.coffee'
+{getHeightFromColor, toPositionObj} = require './common.coffee'
 
 window.app = {}
 
@@ -71,6 +71,10 @@ $ ->
   zones.width = Math.round(map.width / zones.cols)
   zones.height = Math.round(map.height / zones.rows)
 
+  map.chunks = 
+    width: Math.ceil(map.fullwidth / chunkSize)
+    height: Math.ceil(map.fullheight / chunkSize)
+
   origin = [Math.floor(map.center.x / chunkSize), 0, Math.floor(map.center.z / chunkSize)]
 
   game = app.game = vengine
@@ -127,7 +131,17 @@ $ ->
   loadedZones = {}
 
   loadChunk = (chunkPositionRaw, cb) ->
-    chunkPosition = x: chunkPositionRaw[0], y: chunkPositionRaw[1], z: chunkPositionRaw[2]
+    chunkPosition = toPositionObj chunkPositionRaw
+
+    realChunkPosition = null
+
+    if chunkPosition.x < 0
+      realChunkPosition ?= chunkPositionRaw.slice 0
+      realChunkPosition[0] += map.chunks.width
+
+    if realChunkPosition
+      loadChunk realChunkPosition
+      chunkPosition = toPositionObj realChunkPosition
 
     {zone, relativePosition} = convertChunkToZone chunkPosition
 
@@ -240,8 +254,18 @@ $ ->
     permalink.attr 'href', "#lat=#{pos.lat}&lng=#{pos.lng}"
     positionDiv.show()
 
+  wrapWorld = (pos) ->
+    {x} = pos
+    if x < 0
+      pos.x += map.fullwidth
+
+    if x != pos.x
+      log 'wrapping', {x}, pos
+      target.moveTo pos.x, pos.y, pos.z
+
   game.voxelRegion.on 'change', (pos) ->
-    position = x: pos[0], y: pos[1], z: pos[2]
+    position = toPositionObj pos
+    wrapWorld position
     updateMidmap position
     updateLatLngAlt position
 
