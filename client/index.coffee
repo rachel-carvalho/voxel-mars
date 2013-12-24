@@ -203,25 +203,39 @@ $ ->
     if vx > 0.001 or vz > 0.001 then vwalk.stopWalking()
     else vwalk.startWalking()
 
-  div = $('#mid-map')
+  div = $('#map')
   vertical = $('#vertical')
   horizontal = $('#horizontal')
-  img = $('#mid-map img')
+  img = $('#map img')
   positionDiv = $('#position')
   lat = $('#lat')
   lng = $('#lng')
   alt = $('#alt')
   permalink = $('#permalink')
 
-  updateMidmap = (pos) ->
-    h = img.height()
-    w = img.width()
-    horizontal.css
-      top: (pos.z / map.fullheight) * h
-      width: w
-    vertical.css
-      left: (pos.x / map.fullwidth) * w
-      height: h
+  updateMap = (pos, mini) ->
+    height = img.height()
+    width = img.width()
+
+    top = (pos.z / map.fullheight) * height
+    left = (pos.x / map.fullwidth) * width
+
+    if mini
+      border = parseInt(div.css('border-left-width'), 10)
+      half = (div.width() / 2) - border
+      
+      img.css
+        marginLeft: -left + half
+        marginTop: -top + half
+
+      left = top = half
+
+    else
+      img.css marginLeft: 0, marginTop:0
+
+    horizontal.css {top, width}
+    vertical.css {left, height}
+
 
   toLatLngAlt = (pos) ->
     latLngAlt =
@@ -242,14 +256,14 @@ $ ->
 
   game.voxelRegion.on 'change', (pos) ->
     position = x: pos[0], y: pos[1], z: pos[2]
-    updateMidmap position
+    updateMap position, div.hasClass 'mini'
     updateLatLngAlt position
 
   $(window).keydown (ev) ->
     if ev.keyCode is 'M'.charCodeAt(0)
-      div.toggle()
+      div.toggleClass('mini').toggleClass('global')
 
-      updateMidmap position ? target.position
+      updateMap position ? target.position, div.hasClass 'mini'
 
   game.voxels.on 'missingChunk', loadChunk
 
