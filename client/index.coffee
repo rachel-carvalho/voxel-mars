@@ -85,8 +85,7 @@ $ ->
     chunkDistance: 3
     worldOrigin: origin
     controls: {discreteFire: true}
-    skyColor: 0xFA8072
-    playerHeight: 3
+    skyColor: 0xf2c8b8
 
   game.appendTo $('#world')[0]
 

@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "voxel": "0.3.1",
-    "voxel-engine": "0.19.0",
+    "voxel-engine": "rachel-carvalho/voxel-engine",
     "voxel-player": "0.1.0",
     "voxel-walk": "0.0.5",
     "express": "3.4.6",
