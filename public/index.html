@@ -34,10 +34,19 @@
       #horizontal {
         border-top: 1px solid #fff;
       }
-      #mid-map {
-        display: none;
+      #map.global img {width: 100%;}
+      #map.mini {
+        width: 200px;
+        height: 200px;
+        display: block;
+        overflow: hidden;
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        border-radius: 100px;
+        background-color: #000;
+        border: 4px solid #fff;
       }
-      #mid-map img {width: 100%;}
       #position {
         display: none;
         position: fixed;
@@ -76,10 +85,10 @@
     </script>
   </head>
   <body>
-    <div id="mid-map">
+    <div id="map" class="mini">
       <div id="vertical"></div>
       <div id="horizontal"></div>
-      <img src="/maps/mars/midmap.jpg">
+      <img src="/maps/mars/map.jpg">
     </div>
     <div id="position">
       <span class="item"><a id="permalink">[LINK]</a></span>
