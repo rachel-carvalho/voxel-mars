@@ -131,20 +131,7 @@ $ ->
   loadedZones = {}
 
   loadChunk = (chunkPositionRaw, cb) ->
-    chunkPosition = toPositionObj chunkPositionRaw
-
-    realChunkPosition = null
-
-    if chunkPosition.x < 0
-      realChunkPosition ?= chunkPositionRaw.slice 0
-      realChunkPosition[0] += map.chunks.width
-    else if chunkPosition.x >= map.chunks.width
-      realChunkPosition ?= chunkPositionRaw.slice 0
-      realChunkPosition[0] -= map.chunks.width
-
-    if realChunkPosition
-      loadChunk realChunkPosition
-      chunkPosition = toPositionObj realChunkPosition
+    chunkPosition = toPositionObj chunkPositionRaw, map.chunks.width, map.chunks.height
 
     {zone, relativePosition} = convertChunkToZone chunkPosition
 
@@ -253,7 +240,6 @@ $ ->
     horizontal.css {top, width}
     vertical.css {left, height}
 
-
   toLatLngAlt = (pos) ->
     latLngAlt =
       lat: -((pos.z - map.latLngCenterInPx.lat) / map.pixelsPerDegree)
@@ -271,19 +257,8 @@ $ ->
     permalink.attr 'href', "#lat=#{pos.lat}&lng=#{pos.lng}"
     positionDiv.show()
 
-  wrapWorld = (pos) ->
-    {x} = pos
-    if x < 0
-      pos.x += map.fullwidth
-    else if x >= map.fullwidth
-      pos.x -= map.fullwidth
-
-    if x != pos.x
-      target.moveTo pos.x, pos.y, pos.z
-
   game.voxelRegion.on 'change', (pos) ->
-    position = toPositionObj pos
-    wrapWorld position
+    position = toPositionObj pos, map.fullwidth, map.fullheight
     updateMap position, div.hasClass 'mini'
     updateLatLngAlt position
 
@@ -300,7 +275,8 @@ $ ->
       when 'log'
         log e.data.msg
       when 'chunkGenerated'
-        key = "x#{e.data.chunk.position[0]}y#{e.data.chunk.position[1]}z#{e.data.chunk.position[2]}"
+        pos = toPositionObj e.data.chunk.position, map.chunks.width, map.chunks.height
+        key = "x#{pos.x}y#{pos.y}z#{pos.z}"
 
         chunk =
           position: e.data.chunk.position
