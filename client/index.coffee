@@ -167,12 +167,12 @@ $ ->
       hmImg.src = "#{mapDir}/zones/#{zone.key}.png"
 
   target = null
+  avatar = null
 
   startGame = ->
     avatar = vplayer(game)('astronaut.png')
     avatar.possess()
     avatar.position.set(map.center.x + 0.5, map.center.y + map.playerOffset, map.center.z + 0.5)
-    avatar.toggle()
 
     target = game.controls.target()
 
@@ -262,7 +262,10 @@ $ ->
     updateLatLngAlt position
 
   $(window).keydown (ev) ->
-    if ev.keyCode is 'M'.charCodeAt(0)
+    if ev.keyCode is 'C'.charCodeAt(0)
+      avatar.toggle()
+
+    else if ev.keyCode is 'M'.charCodeAt(0)
       div.toggleClass('mini').toggleClass('global')
 
       updateMap position ? target.position, div.hasClass 'mini'
