@@ -184,10 +184,8 @@ $ ->
       z: map.center.z - (origin[2] * chunkSize)
     data = ctx.getImageData(imgPosition.x + offset.x, imgPosition.z + offset.z, 1, 1).data
 
-    map.center.y = 0
     # only consider first channel, red
-    for color in data by 4
-      map.center.y = Math.max map.center.y, getHeightFromColor(color, map.heightScale, map.heightOffset)
+    map.center.y = getHeightFromColor data[0], map.heightScale, map.heightOffset
 
     chunkY = Math.floor(map.center.y / chunkSize)
 
