@@ -29,9 +29,13 @@ getChunkIndex = (x, y, z, size) ->
 
 generateChunk = (info) ->
   {heightMap, position, size, heightScale, heightOffset} = info
-  chunk = new Int8Array(size * size * size)
+
+  chunk = null
+  anyHeight = no
 
   if position.y > -1
+    chunk = new Int8Array(size * size * size)
+  
     startY = position.y * size
 
     for z in [0...size]
@@ -42,9 +46,14 @@ generateChunk = (info) ->
         endY = startY + size
 
         if endY > height >= startY
+          anyHeight = yes
           chunk[getChunkIndex(x, height, z, size)] = 1
 
           secondLayer = height - 1
           if secondLayer >= startY
             chunk[getChunkIndex(x, secondLayer, z, size)] = 1
-  chunk
+  
+  if anyHeight
+    chunk
+  else
+    new Int8Array()
