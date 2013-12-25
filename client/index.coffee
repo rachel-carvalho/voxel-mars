@@ -6,10 +6,11 @@ vplayer = require 'voxel-player'
 vwalk = require 'voxel-walk'
 map = require '../public/maps/mars/map.json'
 {getHeightFromColor, toPositionObj} = require './common.coffee'
+WorkCrew = require '../public/js/workcrew.js'
 
 window.app = {}
 
-worker = app.worker = new Worker '/js/worker.js'
+crew = app.crew = new WorkCrew '/js/worker.js'
 
 mapDir = 'maps/mars'
 
@@ -121,11 +122,12 @@ $ ->
       heightScale: map.heightScale
       heightOffset: map.heightOffset
 
-    worker.postMessage 
-      cmd: 'generateChunk'
-      chunkInfo: chunkInfo
-      ,
-      [data.buffer]
+    crew.addWork
+      id: chunkPositionRaw.join ','
+      msg: 
+        cmd: 'generateChunk'
+        chunkInfo: chunkInfo
+      transferables: [data.buffer]
 
   loadedZones = {}
 
@@ -270,7 +272,8 @@ $ ->
 
   game.voxels.on 'missingChunk', loadChunk
 
-  worker.addEventListener 'message', (e) ->
+  crew.oncomplete = (r) ->
+    e = r.result
     switch e.data.event
       when 'log'
         log e.data.msg
