@@ -1,4 +1,4 @@
-deploy: build upload
+deploy: build upload clean
 
 build:
 	browserify -t coffeeify ./client/index.coffee | uglifyjs > ./public/js/index.js
