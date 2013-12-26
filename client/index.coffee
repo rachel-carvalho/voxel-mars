@@ -216,12 +216,19 @@ $ ->
   alt = $('#alt')
   permalink = $('#permalink')
 
+  toTopLeft = (pos, width, height) ->
+    top: (pos.z / map.fullheight) * height
+    left: (pos.x / map.fullwidth) * width
+
+  fromTopLeft = (pos, width, height) ->
+    x: (pos.left / width) * map.fullwidth
+    z: (pos.top / height) * map.fullheight
+
   updateMap = (pos, mini) ->
     height = img.height()
     width = img.width()
 
-    top = (pos.z / map.fullheight) * height
-    left = (pos.x / map.fullwidth) * width
+    {top, left} = toTopLeft pos, width, height
 
     if mini
       border = parseInt(div.css('border-left-width'), 10)
@@ -261,14 +268,30 @@ $ ->
     updateMap position, div.hasClass 'mini'
     updateLatLngAlt position
 
+  toggleMap = ->
+    div.toggleClass('mini').toggleClass('global')
+    updateMap position ? target.position, div.hasClass 'mini'
+
   $(window).keydown (ev) ->
     if ev.keyCode is 'C'.charCodeAt(0)
       avatar.toggle()
 
     else if ev.keyCode is 'M'.charCodeAt(0)
-      div.toggleClass('mini').toggleClass('global')
+      toggleMap()
 
-      updateMap position ? target.position, div.hasClass 'mini'
+  div.click (e) ->
+    el = $(this)
+    return unless el.hasClass 'global'
+
+    left = e.pageX
+    top = e.pageY
+
+    pos = fromTopLeft {top, left}, img.width(), img.height()
+
+    latLng = toLatLngAlt pos
+
+    location.hash = "#lat=#{latLng.lat}&lng=#{latLng.lng}"
+    location.reload()
 
   game.voxels.on 'missingChunk', loadChunk
 
