@@ -11,34 +11,27 @@
   "pointsOfInterest": {
     "olympusMons": {
       "name": "Olympus Mons",
-      "nasaFile": {
-        "x": 2,
-        "y": 1
-      },
-      "x": 5958,
-      "y": 3412
+      "lat": 17.34375,
+      "lng": -133.453125
     },
     "vallesMarineris": {
       "name": "Valles Marineris",
-      "nasaFile": {
-        "x": 3,
-        "y": 2
-      },
-      "x": 2676,
-      "y": 1728
+      "lat": -13.5,
+      "lng": -69.09375
     },
     "lowestPointInHellas": {
       "name": "Lowest point in Hellas Basin",
-      "nasaFile": {
-        "x": 0,
-        "y": 2
-      },
-      "x": 7961,
-      "y": 4212
+      "lat": -32.90625,
+      "lng": 62.1953125
+    },
+    "biblisTholus": {
+      "name": "Biblis Tholus",
+      "lat": 1.890625,
+      "lng": -123.7265625
     }
   },
   "generateOptions": {
-    "startPosition": "vallesMarineris",
+    "startPosition": "biblisTholus",
     "zones": {
       "cols": 4,
       "rows": 2

@@ -42,12 +42,6 @@ $ ->
     lat: map.center.z
     lng: 0
 
-  if map.generateOptions.startPosition
-    poi = map.pointsOfInterest[map.generateOptions.startPosition]
-    if poi
-      map.center.x = ((poi.nasaFile?.x || 0) * map.width) + poi.x
-      map.center.z = ((poi.nasaFile?.y || 0) * map.height) + poi.y
-
   fromLatLng = (latLng) ->
     {lat, lng} = latLng
     lat = parseFloat lat
@@ -59,6 +53,10 @@ $ ->
       z: -(lat * map.pixelsPerDegree) + map.latLngCenterInPx.lat
 
     pos
+
+  if map.generateOptions.startPosition
+    poi = map.pointsOfInterest[map.generateOptions.startPosition]
+    map.center = fromLatLng(poi) if poi
 
   if hashParams.lat and hashParams.lng
     map.center = fromLatLng hashParams
