@@ -10,7 +10,7 @@ WorkCrew = require '../public/js/workcrew.js'
 
 window.app = {}
 
-crew = app.crew = new WorkCrew '/js/worker.js'
+crew = app.crew = new WorkCrew '/js/worker.js', 2
 
 mapDir = 'maps/mars'
 
