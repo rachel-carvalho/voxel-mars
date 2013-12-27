@@ -13,6 +13,12 @@ a {
   color: #fff;
 }
 
+#wrapper {
+  width: 670px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
 #welcome {
   position: absolute;
   top: 0; left: 0;
@@ -20,12 +26,19 @@ a {
   background: #000;
   z-index: 2;
   text-align: center;
-  padding: 10px;
 }
 
 #welcome h1 {
-  font-size: 52px;
-  margin: 10px 0;
+  font-size: 65px;
+  margin: 10px 0 40px;
+}
+
+#welcome h1 .mars {
+  color: #F23400;
+}
+
+#welcome p {
+  margin: 0 0 15px;
 }
 
 #welcome h1, #play {
@@ -56,8 +69,16 @@ a {
   margin: 0;
 }
 
+#description {
+  float: right;
+}
+
+#controls, #description {
+  width: 48%;
+}
+
 #controls li {
-  margin: 3px 0;
+  margin: 8px 0;
 }
 
 #controls strong:not(.click) {
@@ -70,6 +91,11 @@ a {
 
 #welcome a {
   color: #fff;
+}
+
+#ghbtn {
+  display: block;
+  margin-top: 10px;
 }
 
 #welcome progress[value]::-webkit-progress-bar {
@@ -88,11 +114,13 @@ a {
 #play {
   color: #fff;
   font-size: 32px;
-  background: #953B00;
+  background: #DB4400;
   border: 0;
   padding: 0.5em 1em;
   border-radius: 5px;
   cursor: pointer;
+  margin-top: 50px;
+  clear: both;
 }
 
 #play[disabled] {
@@ -102,7 +130,7 @@ a {
 }
 
 #play:not([disabled]):hover {
-  background: #C86E0F;
+  background: #F55E1A;
 }
 
 #world {

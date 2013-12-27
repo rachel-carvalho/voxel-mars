@@ -18,23 +18,53 @@
   </head>
   <body>
     <div id="welcome">
-      <h1>Voxel Mars</h1>
-      <p>A global-scale reproduction of Mars in voxel.js, using topographic data from MOLA.</p>
-      <p>Controls:</p>
-      <ul id="controls">
-        <li><strong class="click">Click</strong> world screen to control</li>
-        <li><strong>ESC</strong> to release</li>
-        <li><strong>W</strong> <strong>A</strong> <strong>S</strong> <strong>D</strong> to move</li>
-        <li><strong>SPACE</strong> to jump</li>
-        <li><strong>C</strong> to toggle camera perspective</li>
-        <li><strong>M</strong> to toggle global map</li>
-        <li><strong>P</strong> to pause and see this screen</li>
-      </ul>
-      <p>
-        About/source:
-        <a href="http://github.com/rachel-carvalho/voxel-mars">http://github.com/rachel-carvalho/voxel-mars</a>
-      </p>
-      <button id="play" disabled="true">loading...</button>
+      <div id="wrapper">
+        <h1>
+          Voxel 
+          <span class="mars">Mars</span>
+        </h1>
+        <div id="description">
+          <p>
+            A global-scale reproduction of Mars in
+            <a href="http://voxeljs.com/">voxel.js</a>,
+            using topographic data from
+            <a href="http://en.wikipedia.org/wiki/Mars_Orbiter_Laser_Altimeter">MOLA</a>.
+          </p>
+          <p>
+            Source and more info on GitHub:
+            <iframe id="ghbtn" src="http://ghbtns.com/github-btn.html?user=rachel-carvalho&repo=voxel-mars&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+          </p>
+          <p>
+            Written by
+            <a href="https://twitter.com/racheltostring">@racheltostring</a>
+          </p>
+          <!-- AddThis Button BEGIN -->
+          <div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+            <a class="addthis_button_facebook"></a>
+            <a class="addthis_button_twitter"></a>
+            <a class="addthis_button_google_plusone_share"></a>
+            <a class="addthis_button_pinterest_share"></a>
+            <a class="addthis_button_reddit"></a>
+            <a class="addthis_button_hackernews"></a>
+            <a class="addthis_button_email"></a>
+            <a class="addthis_button_compact"></a>
+          </div>
+          <script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
+          <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-527d28760ad9ee8f"></script>
+          <!-- AddThis Button END -->
+          
+        </div>
+        <ul id="controls">
+          <li><strong class="click">Click</strong> world screen to control</li>
+          <li><strong>ESC</strong> to release</li>
+          <li><strong>W</strong> <strong>A</strong> <strong>S</strong> <strong>D</strong> to move</li>
+          <li><strong>SPACE</strong> to jump</li>
+          <li><strong>C</strong> to toggle camera perspective</li>
+          <li><strong>M</strong> to toggle global map</li>
+          <li><strong>P</strong> to pause and see this screen</li>
+        </ul>
+        <button id="play" disabled="true">loading...</button>
+      </div>
       <progress value="10" max="20"></progress>
     </div>
     <div id="map" class="mini">
