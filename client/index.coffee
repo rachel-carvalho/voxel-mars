@@ -4,7 +4,7 @@ voxel = require 'voxel'
 vengine = require 'voxel-engine'
 vplayer = require 'voxel-player'
 vwalk = require 'voxel-walk'
-map = require '../public/maps/mars/map.json'
+map = require '../maps/mars/map.coffee'
 {getHeightFromColor, toPositionObj} = require './common.coffee'
 WorkCrew = require '../public/js/workcrew.js'
 
