@@ -29,8 +29,12 @@ a {
 }
 
 #welcome h1 {
-  font-size: 52px;
+  font-size: 65px;
   margin: 10px 0 40px;
+}
+
+#welcome h1 .mars {
+  color: #F23400;
 }
 
 #welcome p {
@@ -74,7 +78,7 @@ a {
 }
 
 #controls li {
-  margin: 3px 0;
+  margin: 8px 0;
 }
 
 #controls strong:not(.click) {
@@ -110,7 +114,7 @@ a {
 #play {
   color: #fff;
   font-size: 32px;
-  background: #953B00;
+  background: #DB4400;
   border: 0;
   padding: 0.5em 1em;
   border-radius: 5px;
@@ -126,7 +130,7 @@ a {
 }
 
 #play:not([disabled]):hover {
-  background: #C86E0F;
+  background: #F55E1A;
 }
 
 #world {
