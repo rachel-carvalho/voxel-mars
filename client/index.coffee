@@ -8,6 +8,11 @@ map = require '../maps/mars/map.coffee'
 {getHeightFromColor, toPositionObj} = require './common.coffee'
 WorkCrew = require '../public/js/workcrew.js'
 
+# Map = require './map.coffee'
+# m = new Map map
+# log m
+
+
 window.app = {}
 
 crew = app.crew = new WorkCrew '/js/worker.js', 2

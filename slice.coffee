@@ -1,10 +1,5 @@
 # slices nasa .img files into .png "zones" readable by canvas
 
-# map.json:
-#   deltaY = difference between max and min elevation in map
-#   29457m:  highest point: olympus mons at 21249m, lowest: hellas planitia at -8208m
-#   heightScale: by default it's calculated by deltaY / metersPerPixel
-
 fse = require 'fs-extra'
 {PNG} = require 'pngjs'
 Buffer = require('buffer').Buffer
