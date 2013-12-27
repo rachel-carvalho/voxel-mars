@@ -18,23 +18,26 @@
   </head>
   <body>
     <div id="welcome">
-      <h1>Voxel Mars</h1>
-      <p>A global-scale reproduction of Mars in voxel.js, using topographic data from MOLA.</p>
-      <p>Controls:</p>
-      <ul id="controls">
-        <li><strong class="click">Click</strong> world screen to control</li>
-        <li><strong>ESC</strong> to release</li>
-        <li><strong>W</strong> <strong>A</strong> <strong>S</strong> <strong>D</strong> to move</li>
-        <li><strong>SPACE</strong> to jump</li>
-        <li><strong>C</strong> to toggle camera perspective</li>
-        <li><strong>M</strong> to toggle global map</li>
-        <li><strong>P</strong> to pause and see this screen</li>
-      </ul>
-      <p>
-        About/source:
-        <a href="http://github.com/rachel-carvalho/voxel-mars">http://github.com/rachel-carvalho/voxel-mars</a>
-      </p>
-      <button id="play" disabled="true">loading...</button>
+      <div id="wrapper">
+        <h1>Voxel Mars</h1>
+        <div id="description">
+          <p>A global-scale reproduction of Mars in voxel.js, using topographic data from MOLA.</p>
+          <p>
+            About/source:
+            <a href="http://github.com/rachel-carvalho/voxel-mars">http://github.com/rachel-carvalho/voxel-mars</a>
+          </p>
+        </div>
+        <ul id="controls">
+          <li><strong class="click">Click</strong> world screen to control</li>
+          <li><strong>ESC</strong> to release</li>
+          <li><strong>W</strong> <strong>A</strong> <strong>S</strong> <strong>D</strong> to move</li>
+          <li><strong>SPACE</strong> to jump</li>
+          <li><strong>C</strong> to toggle camera perspective</li>
+          <li><strong>M</strong> to toggle global map</li>
+          <li><strong>P</strong> to pause and see this screen</li>
+        </ul>
+        <button id="play" disabled="true">loading...</button>
+      </div>
       <progress value="10" max="20"></progress>
     </div>
     <div id="map" class="mini">

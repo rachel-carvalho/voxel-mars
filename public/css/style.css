@@ -13,6 +13,12 @@ a {
   color: #fff;
 }
 
+#wrapper {
+  width: 670px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
 #welcome {
   position: absolute;
   top: 0; left: 0;
@@ -20,12 +26,15 @@ a {
   background: #000;
   z-index: 2;
   text-align: center;
-  padding: 10px;
 }
 
 #welcome h1 {
   font-size: 52px;
-  margin: 10px 0;
+  margin: 10px 0 40px;
+}
+
+#welcome p {
+  margin: 0 0 15px;
 }
 
 #welcome h1, #play {
@@ -54,6 +63,14 @@ a {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+#description {
+  float: right;
+}
+
+#controls, #description {
+  width: 48%;
 }
 
 #controls li {
@@ -93,6 +110,8 @@ a {
   padding: 0.5em 1em;
   border-radius: 5px;
   cursor: pointer;
+  margin-top: 50px;
+  clear: both;
 }
 
 #play[disabled] {
