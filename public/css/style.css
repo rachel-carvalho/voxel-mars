@@ -89,6 +89,11 @@ a {
   color: #fff;
 }
 
+#ghbtn {
+  display: block;
+  margin-top: 10px;
+}
+
 #welcome progress[value]::-webkit-progress-bar {
   background-color: #333;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
