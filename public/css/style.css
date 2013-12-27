@@ -19,7 +19,18 @@ html, body {
   padding: 10px;
 }
 
-#welcome h1 { text-align: left; }
+#welcome h1 {
+  font-size: 52px;
+  margin: 10px 0;
+}
+
+#welcome h1, #play {
+  font-family: Futura, Trebuchet MS, sans-serif;
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
+#welcome h1, #welcome p, #welcome ul, #welcome li { text-align: left; }
 
 #welcome progress {
   width: 100%;
@@ -31,10 +42,6 @@ html, body {
   border: none;
   background-color: #333;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
-}
-
-#welcome p, #welcome ul, #welcome li {
-  text-align: left;
 }
 
 #welcome ul, #welcome li {
@@ -72,7 +79,6 @@ html, body {
   border: 0;
   padding: 0.5em 1em;
   border-radius: 5px;
-  text-transform: capitalize;
 }
 
 #play[disabled] {
