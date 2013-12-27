@@ -113,7 +113,7 @@ $ ->
     prog = chunkProgress
     progress.attr prog
     if prog.value is prog.max
-      playButton.text 'play!'
+      playButton.text 'land!'
       playButton.removeAttr 'disabled'
       game.paused = yes
 
