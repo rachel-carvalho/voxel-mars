@@ -9,22 +9,19 @@ fse = require 'fs-extra'
 {PNG} = require 'pngjs'
 Buffer = require('buffer').Buffer
 
+map = require './maps/mars/map.coffee'
+
 global.log = console.log
 
 time =
   start: process.hrtime()
 
-mapPath = './public/maps/mars'
-
-jsonPath = "#{mapPath}/map.json"
-
-log "loading json at #{jsonPath}"
-
-map = fse.readJsonSync jsonPath
+inputMapPath = "./maps/#{map.name}"
+outputMapPath = "./public/maps/#{map.name}"
 
 log "using map info #{JSON.stringify map}"
 
-zoneDir = "#{mapPath}/zones"
+zoneDir = "#{outputMapPath}/zones"
 
 log 'deleting current zone dir at ', zoneDir
 fse.removeSync zoneDir
@@ -35,7 +32,7 @@ map.rows ?= 1
 map.fullwidth = map.width * map.cols
 map.fullheight = map.height * map.rows
 
-{zones} = map.generateOptions
+{zones} = map.renderOptions
 zones ?= {}
 zones.cols ?= 1
 zones.rows ?= 1
@@ -56,9 +53,9 @@ max = {"value":54017,"points":[{"x":5958,"y":3412}]}
 
 readFile = (row, col) ->
   if map.cols == 1 and map.rows == 1
-    heightMapPath = "#{mapPath}/#{map.heightmap}"
+    heightMapPath = "#{inputMapPath}/#{map.heightmap}"
   else
-    heightMapPath = "#{mapPath}/heightmap/x#{col}y#{row}.img"
+    heightMapPath = "#{inputMapPath}/heightmap/x#{col}y#{row}.img"
 
   log "loading height map from #{heightMapPath}"
 
