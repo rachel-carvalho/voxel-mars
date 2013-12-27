@@ -53,8 +53,8 @@ $ ->
 
     pos
 
-  if map.generateOptions.startPosition
-    poi = map.pointsOfInterest[map.generateOptions.startPosition]
+  if map.renderOptions.startPosition
+    poi = map.pointsOfInterest[map.renderOptions.startPosition]
     map.center = fromLatLng(poi) if poi
 
   if hashParams.lat and hashParams.lng
@@ -62,7 +62,7 @@ $ ->
     window.location.hash = ''
     hashParams = {}
 
-  {chunkSize, zones} = map.generateOptions
+  {chunkSize, zones} = map.renderOptions
   zones ?= {}
   zones.cols ?= 1
   zones.rows ?= 1

@@ -8,6 +8,14 @@
   "deltaY": 29457,
   "cols": 4,
   "rows": 4,
+  "renderOptions": {
+    "startPosition": "biblisTholus",
+    "zones": {
+      "cols": 4,
+      "rows": 2
+    },
+    "chunkSize": 32
+  },
   "pointsOfInterest": {
     "olympusMons": {
       "name": "Olympus Mons",
@@ -29,13 +37,5 @@
       "lat": 1.890625,
       "lng": -123.7265625
     }
-  },
-  "generateOptions": {
-    "startPosition": "biblisTholus",
-    "zones": {
-      "cols": 4,
-      "rows": 2
-    },
-    "chunkSize": 32
   }
 }
