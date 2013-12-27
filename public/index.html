@@ -3,75 +3,7 @@
   <head>
     <title>Voxel Mars</title>
     <meta charset="utf-8">
-    <style type="text/css">
-      * { box-sizing: border-box; }
-
-      html, body {
-        margin: 0;
-        padding: 0;
-        font-family: sans-serif;
-        overflow: hidden;
-      }
-      
-      #world {
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        user-select: none;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-      }
-
-      #vertical, #horizontal {
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
-      #vertical {
-        border-left: 1px solid #fff;
-      }
-      #horizontal {
-        border-top: 1px solid #fff;
-      }
-      #map.global img {width: 100%;}
-      #map.mini {
-        width: 200px;
-        height: 200px;
-        display: block;
-        overflow: hidden;
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        border-radius: 100px;
-        background-color: #000;
-        border: 4px solid #fff;
-      }
-      #position {
-        display: none;
-        position: fixed;
-        top: 5px;
-        right: 5px;
-        font-family: monospace;
-      }
-      
-      #position .item {
-        display: inline-block;
-        background-color: rgba(0, 0, 0, 0.5);
-        color: #fff;
-        padding: 3px 7px;
-        margin-left: -4px;
-      }
-      
-      #position .item span {font-weight: bold;}
-      
-      #permalink {
-        color: #fff;
-        text-decoration: none;
-      }
-      
-      #permalink:hover {text-decoration: underline;}
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/style.css" media="all">
     <script src="/js/zepto-1.1.1.min.js"></script>
     <script src="/js/index.js"></script>
     <script>
@@ -85,6 +17,23 @@
     </script>
   </head>
   <body>
+    <div id="welcome">
+      <h1>Voxel Mars</h1>
+      <p>A global-scale reproduction of Mars in voxel.js, using topographic data from MOLA.</p>
+      <p>
+        Controls:
+      </p>
+      <ul id="controls">
+        <li><strong>C</strong> to toggle camera perspective</li>
+        <li><strong>M</strong> to toggle global map</li>
+      </ul>
+      <p>
+        Source:
+        <a href="http://github.com/rachel-carvalho/voxel-mars">http://github.com/rachel-carvalho/voxel-mars</a>
+      </p>
+      <progress value="10" max="20"></progress>
+      <button id="play" disabled="true">loading...</button>
+    </div>
     <div id="map" class="mini">
       <div id="vertical"></div>
       <div id="horizontal"></div>

@@ -1,0 +1,140 @@
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+}
+
+#welcome {
+  position: absolute;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  background: #000;
+  z-index: 2;
+  text-align: center;
+  padding: 10px;
+}
+
+#welcome h1 { text-align: left; }
+
+#welcome progress {
+  width: 100%;
+  height: 5px;
+  margin-bottom: 20px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  background-color: #333;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+}
+
+#welcome p, #welcome ul, #welcome li {
+  text-align: left;
+}
+
+#welcome ul, #welcome li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#welcome a {
+  color: #fff;
+}
+
+#welcome progress[value]::-webkit-progress-bar {
+  background-color: #333;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+}
+
+#welcome progress[value]::-webkit-progress-value {
+  background: #e18728;
+}
+
+#welcome progress[value]::-moz-progress-bar {
+  background: #e18728;
+}
+
+#welcome progress, #percent {
+  display: block;
+  margin: 10px 0;
+}
+
+#play {
+  color: #fff;
+  font-size: 32px;
+  background: #953B00;
+  border: 0;
+  padding: 0.5em 1em;
+  border-radius: 5px;
+  text-transform: capitalize;
+}
+
+#play[disabled] {
+  opacity: 0.4;
+  color: #ccc;
+}
+
+#world {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#vertical, #horizontal {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#vertical {
+  border-left: 1px solid #fff;
+}
+#horizontal {
+  border-top: 1px solid #fff;
+}
+#map.global img {width: 100%;}
+#map.mini {
+  width: 200px;
+  height: 200px;
+  display: block;
+  overflow: hidden;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  border-radius: 100px;
+  background-color: #000;
+  border: 4px solid #fff;
+}
+#position {
+  display: none;
+  position: fixed;
+  top: 5px;
+  right: 5px;
+  font-family: monospace;
+}
+
+#position .item {
+  display: inline-block;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 3px 7px;
+  margin-left: -4px;
+}
+
+#position .item span {font-weight: bold;}
+
+#permalink {
+  color: #fff;
+  text-decoration: none;
+}
+
+#permalink:hover {text-decoration: underline;}

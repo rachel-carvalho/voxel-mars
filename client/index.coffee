@@ -32,7 +32,6 @@ $ ->
   map.heightOffset = 1
   # player is one voxel on top of the floor
   map.playerOffset = 1
-  # TODO: calculate center from chosen POI
   map.cols ?= 1
   map.rows ?= 1
   map.fullwidth = map.width * map.cols
@@ -87,6 +86,38 @@ $ ->
     skyColor: 0xf2c8b8
 
   game.appendTo $('#world')[0]
+
+  welcome = $('#welcome')
+  progress = $('#welcome progress')
+  playButton = $('#play')
+  img = $('#map img')
+
+  chunkProgress =
+    value: 0
+    max: Math.pow game.chunkDistance * 2, 3
+
+  imgProgress = 
+    max: Math.floor chunkProgress.max / 4
+  
+  chunkProgress.max += imgProgress.max
+
+  playButton.click (e) ->
+    e.preventDefault()
+    welcome.hide()
+
+  updateProgress = (val) ->
+    val = 1 unless val?
+    chunkProgress.value += val
+    prog = chunkProgress
+    progress.attr prog
+    if prog.value is prog.max
+      playButton.text '▸ play!'
+      playButton.removeAttr 'disabled'
+
+  img.bind 'load', ->
+    updateProgress imgProgress.max
+
+  updateProgress 0
 
   convertChunkToZone = (chunkPosition) ->
     pixelPos = 
@@ -207,7 +238,6 @@ $ ->
   div = $('#map')
   vertical = $('#vertical')
   horizontal = $('#horizontal')
-  img = $('#map img')
   positionDiv = $('#position')
   lat = $('#lat')
   lng = $('#lng')
@@ -308,6 +338,8 @@ $ ->
           voxels: new Int8Array e.data.chunk.voxels
 
         game.showChunk chunk
+
+        updateProgress()
 
         if onChunkRendered[key]
           onChunkRendered[key].cb onChunkRendered[key].ctx, onChunkRendered[key].relativePosition
