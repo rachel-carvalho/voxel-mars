@@ -90,7 +90,22 @@ $ ->
   welcome = $('#welcome')
   progress = $('#welcome progress')
   playButton = $('#play')
+  div = $('#map')
   img = $('#map img')
+  vertical = $('#vertical')
+  horizontal = $('#horizontal')
+  positionElem = $('#position')
+  lat = $('#lat')
+  lng = $('#lng')
+  alt = $('#alt')
+  permalink = $('#permalink')
+  help = $('#help')
+
+  if game.notCapable()
+    welcome.hide()
+    div.hide()
+    positionElem.hide()
+    return
 
   chunkProgress =
     value: 0
@@ -237,16 +252,6 @@ $ ->
     vz = Math.abs(target.velocity.z)
     if vx > 0.001 or vz > 0.001 then vwalk.stopWalking()
     else vwalk.startWalking()
-
-  div = $('#map')
-  vertical = $('#vertical')
-  horizontal = $('#horizontal')
-  positionElem = $('#position')
-  lat = $('#lat')
-  lng = $('#lng')
-  alt = $('#alt')
-  permalink = $('#permalink')
-  help = $('#help')
 
   help.click (e) ->
     e.preventDefault()

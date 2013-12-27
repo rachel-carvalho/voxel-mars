@@ -9,6 +9,10 @@ html, body {
   color: #fff;
 }
 
+a {
+  color: #fff;
+}
+
 #welcome {
   position: absolute;
   top: 0; left: 0;
