@@ -80,6 +80,10 @@ html, body {
   color: #ccc;
 }
 
+#play:not([disabled])::before {
+  content: '▸ ';
+}
+
 #world {
   -moz-user-select: none;
   -webkit-user-select: none;

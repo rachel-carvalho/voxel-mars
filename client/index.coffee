@@ -103,16 +103,19 @@ $ ->
 
   playButton.click (e) ->
     e.preventDefault()
-    welcome.hide()
+    togglePause()
 
   updateProgress = (val) ->
+    return unless playButton.is ':disabled'
+    
     val = 1 unless val?
     chunkProgress.value += val
     prog = chunkProgress
     progress.attr prog
     if prog.value is prog.max
-      playButton.text '▸ play!'
+      playButton.text 'play!'
       playButton.removeAttr 'disabled'
+      game.paused = yes
 
   img.bind 'load', ->
     updateProgress imgProgress.max
@@ -300,12 +303,25 @@ $ ->
     div.toggleClass('mini').toggleClass('global')
     updateMap position ? target.position, div.hasClass 'mini'
 
+  togglePause = ->
+    return if playButton.is ':disabled'
+
+    game.paused = !game.paused
+    welcome.toggle()
+    progress.hide()
+    playButton.text 'resume'
+
   $(window).keydown (ev) ->
-    if ev.keyCode is 'C'.charCodeAt(0)
+    onWelcome = welcome.css('display') isnt 'none'
+
+    if !onWelcome and ev.keyCode is 'C'.charCodeAt(0)
       avatar.toggle()
 
-    else if ev.keyCode is 'M'.charCodeAt(0)
+    else if !onWelcome and ev.keyCode is 'M'.charCodeAt(0)
       toggleMap()
+
+    else if ev.keyCode is 'P'.charCodeAt(0)
+      togglePause()
 
   div.click (e) ->
     el = $(this)
