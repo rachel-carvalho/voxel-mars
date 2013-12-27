@@ -241,11 +241,16 @@ $ ->
   div = $('#map')
   vertical = $('#vertical')
   horizontal = $('#horizontal')
-  positionDiv = $('#position')
+  positionElem = $('#position')
   lat = $('#lat')
   lng = $('#lng')
   alt = $('#alt')
   permalink = $('#permalink')
+  help = $('#help')
+
+  help.click (e) ->
+    e.preventDefault()
+    togglePause()
 
   toTopLeft = (pos, width, height) ->
     top: (pos.z / map.fullheight) * height
@@ -292,7 +297,7 @@ $ ->
     lng.text pos.lng.toFixed 7
     alt.text pos.alt.toFixed 2
     permalink.attr 'href', "#lat=#{pos.lat}&lng=#{pos.lng}"
-    positionDiv.show()
+    positionElem.show()
 
   game.voxelRegion.on 'change', (pos) ->
     position = toPositionObj pos, map.fullwidth, map.fullheight
