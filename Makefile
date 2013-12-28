@@ -11,7 +11,7 @@ upload-dry:
 	s3cmd sync --dry-run --delete-removed --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
 
 NASA_URL = http://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg128
-MAP_PATH = ./public/maps/mars/heightmap
+MAP_PATH = ./maps/mars/heightmap
 
 download-map:
 	curl $(NASA_URL)/megt88n000hb.img -o $(MAP_PATH)/x0y0.img
