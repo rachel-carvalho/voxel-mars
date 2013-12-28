@@ -13,6 +13,8 @@ map = new Map mapData
 LoadProgress = require './load-progress.coffee'
 Chunk = require './chunk.coffee'
 
+NavMap = require './nav-map.coffee'
+
 window.app = {map}
 
 getHashParams = ->
@@ -32,10 +34,7 @@ $ ->
   progress = $('#welcome progress')
   playButton = $('#play')
 
-  mapDiv = $('#map')
-  mapImg = $('#map img')
-  vertical = $('#vertical')
-  horizontal = $('#horizontal')
+  navMap = new NavMap map
 
   positionElem = $('#position')
   lat = $('#lat')
@@ -63,13 +62,13 @@ $ ->
 
   if game.notCapable()
     welcome.hide()
-    mapDiv.hide()
+    navMap.container.hide()
     positionElem.hide()
     return
 
   lp = new LoadProgress
     chunkDistance: map.chunkDistance
-    mapImg: mapImg
+    mapImg: navMap.img
     onUpdate: (prog) ->
       progress.attr prog
     onComplete: (prog) ->
@@ -123,28 +122,6 @@ $ ->
     if vx > 0.001 or vz > 0.001 then vwalk.stopWalking()
     else vwalk.startWalking()
 
-  updateMap = (pos, mini) ->
-    height = mapImg.height()
-    width = mapImg.width()
-
-    {top, left} = map.toTopLeft pos, width, height
-
-    if mini
-      border = parseInt(mapDiv.css('border-left-width'), 10)
-      half = (mapDiv.width() / 2) - border
-      
-      mapImg.css
-        marginLeft: -left + half
-        marginTop: -top + half
-
-      left = top = half
-
-    else
-      mapImg.css marginLeft: 0, marginTop:0
-
-    horizontal.css {top, width}
-    vertical.css {left, height}
-
   updateLatLngAlt = (pos) ->
     pos = map.toLatLngAlt pos
     lat.text pos.lat.toFixed 7
@@ -155,20 +132,15 @@ $ ->
 
   game.voxelRegion.on 'change', (pos) ->
     position = map.toPositionPoint pos
-    updateMap position, mapDiv.hasClass 'mini'
+    navMap.update position
     updateLatLngAlt position
 
-  toggleMap = ->
-    mapDiv.toggleClass('mini').toggleClass('global')
-    updateMap position ? target.position, mapDiv.hasClass 'mini'
-
   togglePause = ->
-    return if playButton.is ':disabled'
-
-    game.paused = !game.paused
-    welcome.toggle()
-    progress.hide()
-    playButton.text 'resume'
+    if lp.complete
+      game.paused = !game.paused
+      welcome.toggle()
+      progress.hide()
+      playButton.text 'resume'
 
   $(window).keydown (ev) ->
     onWelcome = welcome.css('display') isnt 'none'
@@ -177,20 +149,10 @@ $ ->
       avatar.toggle()
 
     else if !onWelcome and ev.keyCode is 'M'.charCodeAt(0)
-      toggleMap()
+      navMap.toggle position or target.position
 
     else if ev.keyCode is 'P'.charCodeAt(0)
       togglePause()
-
-  mapDiv.click (e) ->
-    return unless mapDiv.hasClass 'global'
-
-    pos = map.fromTopLeft {top: e.pageY, left: e.pageX}, mapImg.width(), mapImg.height()
-
-    latLng = map.toLatLngAlt pos
-
-    location.hash = "#lat=#{latLng.lat}&lng=#{latLng.lng}"
-    location.reload()
 
   playButton.click (e) ->
     e.preventDefault()

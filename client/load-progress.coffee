@@ -1,4 +1,6 @@
 class LoadProgress
+  complete: no
+
   constructor: (opts) ->
     {chunkDistance, mapImg, @onUpdate, @onComplete} = opts
 
@@ -24,6 +26,7 @@ class LoadProgress
       @onUpdate @chunkProgress
       
       if @chunkProgress.value is @chunkProgress.max
+        @complete = yes
         @onComplete @chunkProgress
 
 

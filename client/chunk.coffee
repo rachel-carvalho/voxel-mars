@@ -106,11 +106,14 @@ class Chunk
 
         chunk = Chunk.underWork[key]
 
-        delete Chunk.underWork[key]
+        if not chunk
+          log "ops, chunk not found: #{key}"
+        else
+          delete Chunk.underWork[key]
 
-        chunk.voxels = new Int8Array e.data.chunk.voxels
+          chunk.voxels = new Int8Array e.data.chunk.voxels
 
-        chunk.render()
+          chunk.render()
 
 
   @crew.oncomplete = @onWorkComplete
