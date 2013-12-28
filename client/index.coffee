@@ -10,7 +10,7 @@ mapData = require '../maps/mars/map.coffee'
 Map = require './map.coffee'
 map = new Map mapData
 
-LoadProgress = require './loadprogress.coffee'
+LoadProgress = require './load-progress.coffee'
 Chunk = require './chunk.coffee'
 
 window.app = {map}
@@ -31,14 +31,17 @@ $ ->
   welcome = $('#welcome')
   progress = $('#welcome progress')
   playButton = $('#play')
+
   mapDiv = $('#map')
   mapImg = $('#map img')
   vertical = $('#vertical')
   horizontal = $('#horizontal')
+
   positionElem = $('#position')
   lat = $('#lat')
   lng = $('#lng')
   alt = $('#alt')
+
   permalink = $('#permalink')
   help = $('#help')
 
