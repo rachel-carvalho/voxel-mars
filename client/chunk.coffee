@@ -7,15 +7,25 @@ class Chunk
 
   @underWork = {}
 
+  @loading = {}
+
   constructor: (opts) ->
     {@map, coords, @game, @lp, @onRender} = opts
 
     @rawCoords = coords
-    @coords = @map.toPositionChunk coords
 
-    @mapDir = "maps/#{@map.name}"
+    @key = @rawCoords.join ','
 
-    @load()
+    if Chunk.loading[@key]
+      log "already working on chunk #{@key}"
+    else
+      Chunk.loading[@key] = this
+
+      @coords = @map.toPositionChunk coords
+
+      @mapDir = "maps/#{@map.name}"
+
+      @load()
 
 
   # loads zone png and calls `generate`
@@ -27,10 +37,10 @@ class Chunk
     loadedZones = Chunk.loadedZones
 
     if loadedZones[@zone.key]
+      @zone = loadedZones[@zone.key]
       if loadedZones[@zone.key].loading
         loadedZones[@zone.key].toGenerate.push this
       else
-        @zone = loadedZones[@zone.key]
         @generate()
     else
       loadedZones[@zone.key] = @zone
@@ -67,16 +77,17 @@ class Chunk
       heightScale: @map.heightScale
       heightOffset: @map.heightOffset
 
-    key = @rawCoords.join ','
+    if Chunk.underWork[@key]
+      log "crew is working on it: #{@key}"
+    else
+      Chunk.underWork[@key] = this
 
-    Chunk.crew.addWork
-      id: key
-      msg: 
-        cmd: 'generateChunk'
-        chunkInfo: chunkInfo
-      transferables: [data.buffer]
-
-    Chunk.underWork[key] = this
+      Chunk.crew.addWork
+        id: @key
+        msg: 
+          cmd: 'generateChunk'
+          chunkInfo: chunkInfo
+        transferables: [data.buffer]
 
 
   # renders the generated voxels
@@ -99,7 +110,7 @@ class Chunk
     
     switch e.data.event
       when 'log'
-        console.log e.data.msg
+        log e.data.msg
       
       when 'chunkGenerated'
         key = e.data.chunk.position.join ','
@@ -110,6 +121,7 @@ class Chunk
           log "ops, chunk not found: #{key}"
         else
           delete Chunk.underWork[key]
+          delete Chunk.loading[key]
 
           chunk.voxels = new Int8Array e.data.chunk.voxels
 
