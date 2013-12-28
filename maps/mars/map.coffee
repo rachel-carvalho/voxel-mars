@@ -29,14 +29,17 @@ module.exports =
   # by default it's calculated (deltaY / metersPerPixel) to keep same scale
   # heightscale: 255
 
-  renderOptions:
-    # point of interest key where players start
-    startPosition: 'biblisTholus'
-    chunkSize: 32
-    # how each img file is divided in zones (defaults to 1x1)
-    zones:
-      cols: 4
-      rows: 2
+  # rendering options:
+
+  # point of interest key where players start
+  startPosition: 'biblisTholus'
+  chunkSize: 32
+  chunkDistance: 3
+  skyColor: 0xf2c8b8
+  # how each img file is divided in zones (defaults to 1x1)
+  zones:
+    cols: 4
+    rows: 2
 
   pointsOfInterest:
     # key to be referenced by renderOptions.startPosition

@@ -4,91 +4,47 @@ voxel = require 'voxel'
 vengine = require 'voxel-engine'
 vplayer = require 'voxel-player'
 vwalk = require 'voxel-walk'
-map = require '../maps/mars/map.coffee'
-{getHeightFromColor, toPositionObj} = require './common.coffee'
+mapData = require '../maps/mars/map.coffee'
+{getHeightFromColor} = require './common.coffee'
 WorkCrew = require '../public/js/workcrew.js'
 
-# Map = require './map.coffee'
-# m = new Map map
-# log m
+Map = require './map.coffee'
+map = new Map mapData
 
-
-window.app = {}
+window.app = {map}
 
 crew = app.crew = new WorkCrew '/js/worker.js', 2
 
-mapDir = 'maps/mars'
+mapDir = "maps/#{map.name}"
+
+getHashParams = ->
+  params = {}
+  for param in window.location.hash.substring(1).split('&')
+    if param
+      parts = param.split '='
+      params[parts[0]] = parts.splice(1).join '='
+  params
 
 $ ->
-  getHashParams = ->
-    params = {}
-    for param in window.location.hash.substring(1).split('&')
-      if param
-        parts = param.split '='
-        params[parts[0]] = parts.splice(1).join '='
-    params
 
   hashParams = getHashParams()
 
-  app.map = map
-  map.heightScale ?= map.deltaY / map.metersPerPixel
-  map.metersPerVoxelVertical = map.deltaY / map.heightScale
-  # all heights are added one to avoid holes at altitude 0
-  map.heightOffset = 1
-  # player is one voxel on top of the floor
-  map.playerOffset = 1
-  map.cols ?= 1
-  map.rows ?= 1
-  map.fullwidth = map.width * map.cols
-  map.fullheight = map.height * map.rows
-  map.center = {x: map.fullwidth / 2, z: map.fullheight / 2}
-  map.latLngCenterInPx =
-    lat: map.center.z
-    lng: 0
-
-  fromLatLng = (latLng) ->
-    {lat, lng} = latLng
-    lat = parseFloat lat
-    lng = parseFloat lng
-    lng += 360 if lng < 0
-
-    pos =
-      x: lng * map.pixelsPerDegree
-      z: -(lat * map.pixelsPerDegree) + map.latLngCenterInPx.lat
-
-    pos
-
-  if map.renderOptions.startPosition
-    poi = map.pointsOfInterest[map.renderOptions.startPosition]
-    map.center = fromLatLng(poi) if poi
-
   if hashParams.lat and hashParams.lng
-    map.center = fromLatLng hashParams
+    map.startPoint = map.fromLatLng hashParams
     window.location.hash = ''
     hashParams = {}
 
-  {chunkSize, zones} = map.renderOptions
-  zones ?= {}
-  zones.cols ?= 1
-  zones.rows ?= 1
-  zones.width = Math.round(map.width / zones.cols)
-  zones.height = Math.round(map.height / zones.rows)
-
-  map.chunks = 
-    width: Math.ceil(map.fullwidth / chunkSize)
-    height: Math.ceil(map.fullheight / chunkSize)
-
-  origin = [Math.floor(map.center.x / chunkSize), 0, Math.floor(map.center.z / chunkSize)]
+  origin = map.getOrigin()
 
   game = app.game = vengine
-    materials: ['mars']
+    materials: [map.name]
     materialFlatColor: no
     generateChunks: no
-    chunkSize: chunkSize
-    chunkDistance: 3
+    chunkSize: map.chunkSize
+    chunkDistance: map.chunkDistance
     worldOrigin: origin
     controls: {discreteFire: true}
-    skyColor: 0xf2c8b8
+    skyColor: map.skyColor
 
   game.appendTo $('#world')[0]
 
@@ -114,7 +70,7 @@ $ ->
 
   chunkProgress =
     value: 0
-    max: Math.pow game.chunkDistance * 2, 3
+    max: Math.pow map.chunkDistance * 2, 3
 
   imgProgress = 
     max: Math.floor chunkProgress.max / 4
@@ -125,10 +81,8 @@ $ ->
     e.preventDefault()
     togglePause()
 
-  updateProgress = (val) ->
+  updateProgress = (val = 1) ->
     return unless playButton.is ':disabled'
-    
-    val = 1 unless val?
     chunkProgress.value += val
     prog = chunkProgress
     progress.attr prog
@@ -142,21 +96,6 @@ $ ->
 
   updateProgress 0
 
-  convertChunkToZone = (chunkPosition) ->
-    pixelPos = 
-      x: chunkPosition.x * chunkSize
-      z: chunkPosition.z * chunkSize
-    
-    zone =
-      x: Math.floor(pixelPos.x / zones.width)
-      z: Math.floor(pixelPos.z / zones.height)
-
-    relativePosition =
-      x: pixelPos.x % zones.width
-      z: pixelPos.z % zones.height
-
-    {zone, relativePosition}
-
   onChunkRendered = {}
 
   renderChunk = (ctx, relativePosition, chunkPosition, chunkPositionRaw, cb) ->
@@ -164,13 +103,13 @@ $ ->
       key = "x#{chunkPosition.x}y#{chunkPosition.y}z#{chunkPosition.z}"
       onChunkRendered[key] = {cb, ctx, relativePosition}
 
-    data = ctx.getImageData(relativePosition.x, relativePosition.z, chunkSize, chunkSize).data
+    data = ctx.getImageData(relativePosition.x, relativePosition.z, map.chunkSize, map.chunkSize).data
 
     chunkInfo =
       heightMap: data.buffer
       position: chunkPosition
       positionRaw: chunkPositionRaw
-      size: chunkSize
+      size: map.chunkSize
       heightScale: map.heightScale
       heightOffset: map.heightOffset
 
@@ -184,9 +123,9 @@ $ ->
   loadedZones = {}
 
   loadChunk = (chunkPositionRaw, cb) ->
-    chunkPosition = toPositionObj chunkPositionRaw, map.chunks.width, map.chunks.height
+    chunkPosition = map.toPositionChunk chunkPositionRaw
 
-    {zone, relativePosition} = convertChunkToZone chunkPosition
+    {zone, relativePosition} = map.convertChunkToZone chunkPosition
 
     zone.key = "x#{zone.x}/y#{zone.z}"
 
@@ -207,8 +146,8 @@ $ ->
       hmImg = new Image()
       hmImg.onload = ->
         loadedZones[zone.key].canvas = canvas = document.createElement 'canvas'
-        canvas.width = zones.width
-        canvas.height = zones.height
+        canvas.width = map.zones.width
+        canvas.height = map.zones.height
         loadedZones[zone.key].ctx = ctx = canvas.getContext '2d'
         ctx.drawImage this, 0, 0
         loadedZones[zone.key].loading = no
@@ -226,7 +165,7 @@ $ ->
   startGame = ->
     avatar = vplayer(game)('astronaut.png')
     avatar.possess()
-    avatar.position.set(map.center.x + 0.5, map.center.y + map.playerOffset, map.center.z + 0.5)
+    avatar.position.set(map.startPoint.x + 0.5, map.startPoint.y + map.playerOffset, map.startPoint.z + 0.5)
 
     target = game.controls.target()
 
@@ -234,14 +173,14 @@ $ ->
 
   loadChunk origin, (ctx, imgPosition) ->
     offset = 
-      x: map.center.x - (origin[0] * chunkSize)
-      z: map.center.z - (origin[2] * chunkSize)
+      x: map.startPoint.x - (origin[0] * map.chunkSize)
+      z: map.startPoint.z - (origin[2] * map.chunkSize)
     data = ctx.getImageData(imgPosition.x + offset.x, imgPosition.z + offset.z, 1, 1).data
 
     # only consider first channel, red
-    map.center.y = getHeightFromColor data[0], map.heightScale, map.heightOffset
+    map.startPoint.y = getHeightFromColor data[0], map.heightScale, map.heightOffset
 
-    chunkY = Math.floor(map.center.y / chunkSize)
+    chunkY = Math.floor(map.startPoint.y / map.chunkSize)
 
     if chunkY == 0
       startGame()
@@ -262,19 +201,11 @@ $ ->
     e.preventDefault()
     togglePause()
 
-  toTopLeft = (pos, width, height) ->
-    top: (pos.z / map.fullheight) * height
-    left: (pos.x / map.fullwidth) * width
-
-  fromTopLeft = (pos, width, height) ->
-    x: (pos.left / width) * map.fullwidth
-    z: (pos.top / height) * map.fullheight
-
   updateMap = (pos, mini) ->
     height = img.height()
     width = img.width()
 
-    {top, left} = toTopLeft pos, width, height
+    {top, left} = map.toTopLeft pos, width, height
 
     if mini
       border = parseInt(div.css('border-left-width'), 10)
@@ -292,17 +223,8 @@ $ ->
     horizontal.css {top, width}
     vertical.css {left, height}
 
-  toLatLngAlt = (pos) ->
-    latLngAlt =
-      lat: -((pos.z - map.latLngCenterInPx.lat) / map.pixelsPerDegree)
-      lng: pos.x / map.pixelsPerDegree
-      alt: ((pos.y - map.heightOffset - map.playerOffset) * map.metersPerVoxelVertical) - map.datum
-    latLngAlt.lng -= 360 if latLngAlt.lng > 180
-
-    latLngAlt
-
   updateLatLngAlt = (pos) ->
-    pos = toLatLngAlt pos
+    pos = map.toLatLngAlt pos
     lat.text pos.lat.toFixed 7
     lng.text pos.lng.toFixed 7
     alt.text pos.alt.toFixed 2
@@ -310,7 +232,7 @@ $ ->
     positionElem.show()
 
   game.voxelRegion.on 'change', (pos) ->
-    position = toPositionObj pos, map.fullwidth, map.fullheight
+    position = map.toPositionPoint pos
     updateMap position, div.hasClass 'mini'
     updateLatLngAlt position
 
@@ -339,15 +261,11 @@ $ ->
       togglePause()
 
   div.click (e) ->
-    el = $(this)
-    return unless el.hasClass 'global'
+    return unless div.hasClass 'global'
 
-    left = e.pageX
-    top = e.pageY
+    pos = map.fromTopLeft {top: e.pageY, left: e.pageX}, img.width(), img.height()
 
-    pos = fromTopLeft {top, left}, img.width(), img.height()
-
-    latLng = toLatLngAlt pos
+    latLng = map.toLatLngAlt pos
 
     location.hash = "#lat=#{latLng.lat}&lng=#{latLng.lng}"
     location.reload()
@@ -360,12 +278,12 @@ $ ->
       when 'log'
         log e.data.msg
       when 'chunkGenerated'
-        pos = toPositionObj e.data.chunk.position, map.chunks.width, map.chunks.height
+        pos = map.toPositionChunk e.data.chunk.position
         key = "x#{pos.x}y#{pos.y}z#{pos.z}"
 
         chunk =
           position: e.data.chunk.position
-          dims: [chunkSize, chunkSize, chunkSize]
+          dims: [map.chunkSize, map.chunkSize, map.chunkSize]
           voxels: new Int8Array e.data.chunk.voxels
 
         game.showChunk chunk
