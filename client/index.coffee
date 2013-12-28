@@ -26,7 +26,6 @@ getHashParams = ->
   params
 
 $ ->
-
   hashParams = getHashParams()
 
   if hashParams.lat and hashParams.lng
@@ -125,7 +124,7 @@ $ ->
   loadChunk = (chunkPositionRaw, cb) ->
     chunkPosition = map.toPositionChunk chunkPositionRaw
 
-    {zone, relativePosition} = map.convertChunkToZone chunkPosition
+    {zone, relativePosition} = map.findZoneByChunk chunkPosition
 
     zone.key = "x#{zone.x}/y#{zone.z}"
 

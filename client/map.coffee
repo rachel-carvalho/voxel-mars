@@ -19,9 +19,9 @@ class Map
     # different from @metersPerPixel in case heightScale has been manually set
     @metersPerVoxelVertical = @deltaY / @heightScale
 
-    @fullwidth = @width * @cols
-    @fullheight = @height * @rows
-    @center = {x: @fullwidth / 2, z: @fullheight / 2}
+    @fullWidth = @width * @cols
+    @fullHeight = @height * @rows
+    @center = {x: @fullWidth / 2, z: @fullHeight / 2}
     
     # which pixel represents lat/lng zero
     @latLngCenterInPx =
@@ -41,8 +41,8 @@ class Map
 
     # width and height of map in chunks 
     @chunks = 
-      width: Math.ceil(@fullwidth / @chunkSize)
-      height: Math.ceil(@fullheight / @chunkSize)
+      width: Math.ceil(@fullWidth / @chunkSize)
+      height: Math.ceil(@fullHeight / @chunkSize)
 
     # constants:
 
@@ -52,20 +52,24 @@ class Map
     @playerOffset = 1
 
 
+  # chunk in which player spawns
   getOrigin: ->
     [Math.floor(@startPoint.x / @chunkSize), 0, Math.floor(@startPoint.z / @chunkSize)]
 
 
-  textToPixel: (text, coord) ->
-    widthHeight = if coord is 'x' then 'width' else 'height'
-    if text is 'left' or text is 'top'
-      0
-    else if text is 'center'
-      @center[coord]
-    else if text is 'right' or text is 'bottom'
-      @["full#{widthHeight}"]
+  # translates anchor point to map X/Z values
+  textToPixel: (anchor, axis) ->
+    widthHeight = if axis is 'x' then 'Width' else 'Height'
+    switch anchor
+      when 'left', 'top'
+        0
+      when 'center'
+        @center[axis]
+      when 'right', 'bottom'
+        @["full#{widthHeight}"]
 
 
+  # translates latitude/longitude to voxel coordinates
   fromLatLng: (latLng) ->
     {lat, lng} = latLng
     lat = parseFloat lat
@@ -79,6 +83,7 @@ class Map
     pos
 
 
+  # translates voxel coordinates to latitude/longitude
   toLatLngAlt: (pos) ->
     latLngAlt =
       lat: -((pos.z - @latLngCenterInPx.lat) / @pixelsPerDegree)
@@ -89,7 +94,8 @@ class Map
     latLngAlt
 
 
-  convertChunkToZone: (chunkPosition) ->
+  # finds X/Z for zone and inside zone image, X/Z for a given chunk
+  findZoneByChunk: (chunkPosition) ->
     pixelPos = 
       x: chunkPosition.x * @chunkSize
       z: chunkPosition.z * @chunkSize
@@ -105,25 +111,30 @@ class Map
     {zone, relativePosition}
 
 
+  # converts chunk coord array into absolute coord object
   toPositionChunk: (arr) ->
     x: mod arr[0], @chunks.width
     y: arr[1]
     z: arr[2]
 
 
+  # converts voxel coord array into absolute coord object
   toPositionPoint: (arr) ->
-    x: mod arr[0], @fullwidth
+    x: mod arr[0], @fullWidth
     y: arr[1]
     z: arr[2]
 
+
+  # converts voxel coord object to css top left coords, based on element width/height
   toTopLeft: (pos, width, height) ->
-    top: (pos.z / @fullheight) * height
-    left: (pos.x / @fullwidth) * width
+    top: (pos.z / @fullHeight) * height
+    left: (pos.x / @fullWidth) * width
 
 
+  # converts css top left coords to voxel coord object, based on element width/height
   fromTopLeft: (pos, width, height) ->
-    x: (pos.left / width) * @fullwidth
-    z: (pos.top / height) * @fullheight
+    x: (pos.left / width) * @fullWidth
+    z: (pos.top / height) * @fullHeight
 
 
 mod = (num, m) ->
