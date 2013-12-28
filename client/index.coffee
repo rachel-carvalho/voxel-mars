@@ -6,16 +6,14 @@ vplayer = require 'voxel-player'
 vwalk = require 'voxel-walk'
 mapData = require '../maps/mars/map.coffee'
 {getHeightFromColor} = require './common.coffee'
-WorkCrew = require '../public/js/workcrew.js'
 
 Map = require './map.coffee'
 map = new Map mapData
 
+LoadProgress = require './loadprogress.coffee'
+Chunk = require './chunk.coffee'
+
 window.app = {map}
-
-crew = app.crew = new WorkCrew '/js/worker.js', 2
-
-mapDir = "maps/#{map.name}"
 
 getHashParams = ->
   params = {}
@@ -66,96 +64,15 @@ $ ->
     positionElem.hide()
     return
 
-  chunkProgress =
-    value: 0
-    max: Math.pow map.chunkDistance * 2, 3
-
-  imgProgress = 
-    max: Math.floor chunkProgress.max / 4
-  
-  chunkProgress.max += imgProgress.max
-
-  playButton.click (e) ->
-    e.preventDefault()
-    togglePause()
-
-  updateProgress = (val = 1) ->
-    return unless playButton.is ':disabled'
-    chunkProgress.value += val
-    prog = chunkProgress
-    progress.attr prog
-    if prog.value is prog.max
+  lp = new LoadProgress
+    chunkDistance: map.chunkDistance
+    mapImg: mapImg
+    onUpdate: (prog) ->
+      progress.attr prog
+    onComplete: (prog) ->
       playButton.text 'land!'
       playButton.removeAttr 'disabled'
       game.paused = yes
-
-  mapImg.one 'load', ->
-    updateProgress imgProgress.max
-
-  updateProgress 0
-
-  onChunkRendered = {}
-
-  renderChunk = (ctx, relativePosition, chunkPosition, chunkPositionRaw, cb) ->
-    if typeof cb == 'function'
-      key = "x#{chunkPosition.x}y#{chunkPosition.y}z#{chunkPosition.z}"
-      onChunkRendered[key] = {cb, ctx, relativePosition}
-
-    data = ctx.getImageData(relativePosition.x, relativePosition.z, map.chunkSize, map.chunkSize).data
-
-    chunkInfo =
-      heightMap: data.buffer
-      position: chunkPosition
-      positionRaw: chunkPositionRaw
-      size: map.chunkSize
-      heightScale: map.heightScale
-      heightOffset: map.heightOffset
-
-    crew.addWork
-      id: chunkPositionRaw.join ','
-      msg: 
-        cmd: 'generateChunk'
-        chunkInfo: chunkInfo
-      transferables: [data.buffer]
-
-  loadedZones = {}
-
-  loadChunk = (chunkPositionRaw, cb) ->
-    chunkPosition = map.toPositionChunk chunkPositionRaw
-
-    {zone, relativePosition} = map.findZoneByChunk chunkPosition
-
-    zone.key = "x#{zone.x}/y#{zone.z}"
-
-    if loadedZones[zone.key]
-      if loadedZones[zone.key].loading
-        loadedZones[zone.key].toRender.push {relativePosition, chunkPosition, chunkPositionRaw, cb}
-      else
-        key = "x#{chunkPosition.x}y#{chunkPosition.y}z#{chunkPosition.z}"
-        {ctx} = loadedZones[zone.key]
-        renderChunk ctx, relativePosition, chunkPosition, chunkPositionRaw, cb
-    else
-      loadedZones[zone.key] =
-        x: zone.x
-        z: zone.z
-        loading: yes
-        toRender: [{relativePosition, chunkPosition, chunkPositionRaw, cb}]
-
-      hmImg = new Image()
-      hmImg.onload = ->
-        loadedZones[zone.key].canvas = canvas = document.createElement 'canvas'
-        canvas.width = map.zones.width
-        canvas.height = map.zones.height
-        loadedZones[zone.key].ctx = ctx = canvas.getContext '2d'
-        ctx.drawImage this, 0, 0
-        loadedZones[zone.key].loading = no
-        
-        for chunk in loadedZones[zone.key].toRender
-          {relativePosition, chunkPosition, chunkPositionRaw, cb} = chunk
-          renderChunk ctx, relativePosition, chunkPosition, chunkPositionRaw, cb
-        loadedZones[zone.key].toRender = []
-        
-      hmImg.src = "#{mapDir}/zones/#{zone.key}.png"
 
   target = null
   avatar = null
@@ -169,22 +86,30 @@ $ ->
 
     game.paused = no
 
-  loadChunk origin, (ctx, imgPosition) ->
-    offset = 
-      x: map.startPoint.x - (origin[0] * map.chunkSize)
-      z: map.startPoint.z - (origin[2] * map.chunkSize)
-    data = ctx.getImageData(imgPosition.x + offset.x, imgPosition.z + offset.z, 1, 1).data
+  spawnInfo = 
+    map: map
+    coords: origin
+    game: game
+    lp: lp
+    onRender: ->
+      offset = 
+        x: map.startPoint.x - (origin[0] * map.chunkSize)
+        z: map.startPoint.z - (origin[2] * map.chunkSize)
+      data = @zone.ctx.getImageData(@relativePosition.x + offset.x, @relativePosition.z + offset.z, 1, 1).data
 
-    # only consider first channel, red
-    map.startPoint.y = getHeightFromColor data[0], map.heightScale, map.heightOffset
+      # only consider first channel, red
+      map.startPoint.y = getHeightFromColor data[0], map.heightScale, map.heightOffset
 
-    chunkY = Math.floor(map.startPoint.y / map.chunkSize)
+      chunkY = Math.floor(map.startPoint.y / map.chunkSize)
 
-    if chunkY == 0
-      startGame()
-    else
-      origin[1] = chunkY
-      loadChunk origin, startGame
+      if chunkY == 0
+        startGame()
+      else
+        origin[1] = chunkY
+        spawnInfo.onRender = startGame
+        spawnChunk = new Chunk spawnInfo
+
+  spawnChunk = new Chunk spawnInfo
 
   position = null
 
@@ -194,10 +119,6 @@ $ ->
     vz = Math.abs(target.velocity.z)
     if vx > 0.001 or vz > 0.001 then vwalk.stopWalking()
     else vwalk.startWalking()
-
-  help.click (e) ->
-    e.preventDefault()
-    togglePause()
 
   updateMap = (pos, mini) ->
     height = mapImg.height()
@@ -268,27 +189,14 @@ $ ->
     location.hash = "#lat=#{latLng.lat}&lng=#{latLng.lng}"
     location.reload()
 
-  game.voxels.on 'missingChunk', loadChunk
+  playButton.click (e) ->
+    e.preventDefault()
+    togglePause()
 
-  crew.oncomplete = (r) ->
-    e = r.result
-    switch e.data.event
-      when 'log'
-        log e.data.msg
-      when 'chunkGenerated'
-        pos = map.toPositionChunk e.data.chunk.position
-        key = "x#{pos.x}y#{pos.y}z#{pos.z}"
+  help.click (e) ->
+    e.preventDefault()
+    togglePause()
 
-        chunk =
-          position: e.data.chunk.position
-          dims: [map.chunkSize, map.chunkSize, map.chunkSize]
-          voxels: new Int8Array e.data.chunk.voxels
-
-        game.showChunk chunk
-
-        updateProgress()
-
-        if onChunkRendered[key]
-          onChunkRendered[key].cb onChunkRendered[key].ctx, onChunkRendered[key].relativePosition
-          onChunkRendered[key] = null
+  game.voxels.on 'missingChunk', (coords) ->
+    new Chunk {map, coords, game, lp}
 
