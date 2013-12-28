@@ -5,7 +5,9 @@ class NavMap
       @vertical = $('#vertical')
       @horizontal = $('#horizontal')
 
-      $('#map.global').click (e) => @onGlobalClick e
+      @container.click (e) =>
+        if @container.hasClass 'global'
+          @onGlobalClick e
 
 
   mini: ->
@@ -36,8 +38,8 @@ class NavMap
 
 
   toggle: (position) ->
-      @container.toggleClass('mini').toggleClass('global')
-      @update position
+    @container.toggleClass('mini').toggleClass('global')
+    @update position
 
 
   onGlobalClick: (e) ->
