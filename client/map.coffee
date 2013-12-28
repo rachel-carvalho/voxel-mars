@@ -56,6 +56,10 @@ class Map
   getOrigin: ->
     [Math.floor(@startPoint.x / @chunkSize), 0, Math.floor(@startPoint.z / @chunkSize)]
 
+  # sets the start point if latitude and longitude have been passed
+  setStartPoint: (latLng) ->
+    if latLng.lat and latLng.lng
+      @startPoint = @fromLatLng latLng
 
   # translates anchor point to map X/Z values
   textToPixel: (anchor, axis) ->

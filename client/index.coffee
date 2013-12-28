@@ -23,15 +23,28 @@ getHashParams = ->
     if param
       parts = param.split '='
       params[parts[0]] = parts.splice(1).join '='
+
+  window.location.hash = ''
+
   params
 
 $ ->
-  hashParams = getHashParams()
+  worldDiv = $('#world')
+  welcome = $('#welcome')
+  progress = $('#welcome progress')
+  playButton = $('#play')
+  mapDiv = $('#map')
+  mapImg = $('#map img')
+  vertical = $('#vertical')
+  horizontal = $('#horizontal')
+  positionElem = $('#position')
+  lat = $('#lat')
+  lng = $('#lng')
+  alt = $('#alt')
+  permalink = $('#permalink')
+  help = $('#help')
 
-  if hashParams.lat and hashParams.lng
-    map.startPoint = map.fromLatLng hashParams
-    window.location.hash = ''
-    hashParams = {}
+  map.setStartPoint getHashParams()
 
   origin = map.getOrigin()
 
@@ -45,25 +58,11 @@ $ ->
     controls: {discreteFire: true}
     skyColor: map.skyColor
 
-  game.appendTo $('#world')[0]
-
-  welcome = $('#welcome')
-  progress = $('#welcome progress')
-  playButton = $('#play')
-  div = $('#map')
-  img = $('#map img')
-  vertical = $('#vertical')
-  horizontal = $('#horizontal')
-  positionElem = $('#position')
-  lat = $('#lat')
-  lng = $('#lng')
-  alt = $('#alt')
-  permalink = $('#permalink')
-  help = $('#help')
+  game.appendTo worldDiv[0]
 
   if game.notCapable()
     welcome.hide()
-    div.hide()
+    mapDiv.hide()
     positionElem.hide()
     return
 
@@ -90,7 +89,7 @@ $ ->
       playButton.removeAttr 'disabled'
       game.paused = yes
 
-  img.bind 'load', ->
+  mapImg.one 'load', ->
     updateProgress imgProgress.max
 
   updateProgress 0
@@ -201,23 +200,23 @@ $ ->
     togglePause()
 
   updateMap = (pos, mini) ->
-    height = img.height()
-    width = img.width()
+    height = mapImg.height()
+    width = mapImg.width()
 
     {top, left} = map.toTopLeft pos, width, height
 
     if mini
-      border = parseInt(div.css('border-left-width'), 10)
-      half = (div.width() / 2) - border
+      border = parseInt(mapDiv.css('border-left-width'), 10)
+      half = (mapDiv.width() / 2) - border
       
-      img.css
+      mapImg.css
         marginLeft: -left + half
         marginTop: -top + half
 
       left = top = half
 
     else
-      img.css marginLeft: 0, marginTop:0
+      mapImg.css marginLeft: 0, marginTop:0
 
     horizontal.css {top, width}
     vertical.css {left, height}
@@ -232,12 +231,12 @@ $ ->
 
   game.voxelRegion.on 'change', (pos) ->
     position = map.toPositionPoint pos
-    updateMap position, div.hasClass 'mini'
+    updateMap position, mapDiv.hasClass 'mini'
     updateLatLngAlt position
 
   toggleMap = ->
-    div.toggleClass('mini').toggleClass('global')
-    updateMap position ? target.position, div.hasClass 'mini'
+    mapDiv.toggleClass('mini').toggleClass('global')
+    updateMap position ? target.position, mapDiv.hasClass 'mini'
 
   togglePause = ->
     return if playButton.is ':disabled'
@@ -259,10 +258,10 @@ $ ->
     else if ev.keyCode is 'P'.charCodeAt(0)
       togglePause()
 
-  div.click (e) ->
-    return unless div.hasClass 'global'
+  mapDiv.click (e) ->
+    return unless mapDiv.hasClass 'global'
 
-    pos = map.fromTopLeft {top: e.pageY, left: e.pageX}, img.width(), img.height()
+    pos = map.fromTopLeft {top: e.pageY, left: e.pageX}, mapImg.width(), mapImg.height()
 
     latLng = map.toLatLngAlt pos
 
