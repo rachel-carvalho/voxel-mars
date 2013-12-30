@@ -10,10 +10,12 @@ build:
 	sed -i '' -e 's/"\/js\/index.js"/"\/js\/index.'$(JS_TS)'.js"/' ./public/index.html 
 
 upload:
+	s3cmd sync --add-header "Cache-Control: no-cache, no-store, must-revalidate" --add-header "Pragma: no-cache" --add-header "Expires: 0" --acl-public public/index.html s3://www.voxelmars.com/
 	s3cmd sync --add-header "Content-Encoding: gzip" --mime-type="application/javascript" --acl-public public/js/index.*.js s3://www.voxelmars.com/js/
 	s3cmd sync --delete-removed --exclude 'style.css' --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
 
 upload-dry:
+	s3cmd sync --dry-run --add-header "Cache-Control: no-cache, no-store, must-revalidate" --add-header "Pragma: no-cache" --add-header "Expires: 0" --acl-public public/index.html s3://www.voxelmars.com/
 	s3cmd sync --dry-run --add-header "Content-Encoding: gzip" --mime-type="application/javascript" --acl-public public/js/index.*.js s3://www.voxelmars.com/js/
 	s3cmd sync --dry-run --delete-removed --exclude 'style.css' --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
 
