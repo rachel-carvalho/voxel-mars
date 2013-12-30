@@ -1,7 +1,7 @@
 deploy: build upload clean
 
 build:
-	browserify -t coffeeify ./client/index.coffee | uglifyjs > ./public/js/index.js
+	browserify -t coffeeify ./client/index.coffee | uglifyjs | gzip -9 -c > ./public/js/index.js
 
 upload:
 	s3cmd sync --delete-removed --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
