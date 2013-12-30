@@ -1,13 +1,21 @@
 deploy: build upload clean
 
+JS_TS = `stat -f "%Sm" -t "%Y%m%d%H%M%S" client/`
+CSS_TS=`stat -f "%Sm" -t "%Y%m%d%H%M%S" public/css/style.css`
+
 build:
-	browserify -t coffeeify ./client/index.coffee | uglifyjs | gzip -9 -c > ./public/js/index.js
+	browserify -t coffeeify ./client/index.coffee | uglifyjs | gzip -9 -c > ./public/js/index.$(JS_TS).js
+	cp public/css/style.css public/css/style.$(CSS_TS).css
+	sed -i '' -e 's/"\/css\/style.css"/"\/css\/style.'$(CSS_TS)'.css"/' ./public/index.html 
+	sed -i '' -e 's/"\/js\/index.js"/"\/js\/index.'$(JS_TS)'.js"/' ./public/index.html 
 
 upload:
-	s3cmd sync --delete-removed --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
+	s3cmd sync --add-header "Content-Encoding: gzip" --mime-type="application/javascript" --acl-public public/js/index.*.js s3://www.voxelmars.com/js/
+	s3cmd sync --delete-removed --exclude 'style.css' --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
 
 upload-dry:
-	s3cmd sync --dry-run --delete-removed --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
+	s3cmd sync --dry-run --add-header "Content-Encoding: gzip" --mime-type="application/javascript" --acl-public public/js/index.*.js s3://www.voxelmars.com/js/
+	s3cmd sync --dry-run --delete-removed --exclude 'style.css' --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
 
 NASA_URL = http://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg128
 MAP_PATH = ./maps/mars/heightmap
@@ -34,6 +42,8 @@ slice-map:
 	coffee ./slice.coffee
 
 clean:
-	rm ./public/js/index.js
+	sed -i '' -e 's/"\/css\/style.'$(CSS_TS)'.css"/"\/css\/style.css"/' ./public/index.html 
+	sed -i '' -e 's/"\/js\/index.'$(JS_TS)'.js"/"\/js\/index.js"/' ./public/index.html 
+	rm ./public/js/index.*.js ./public/css/style.*.css
 
 .PHONY: build, upload, deploy, upload-dry, download-map, slice-map, clean
