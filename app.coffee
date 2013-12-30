@@ -5,7 +5,7 @@ app = express()
 
 app.use express.static "#{__dirname}/public"
 
-for name in 'index worker'.split ' '
+for name in 'index'.split ' '
   app.use "/js/#{name}.js", browserify "./client/#{name}.coffee", transform: ['coffeeify']
 
 port = process.env.PORT || 3000

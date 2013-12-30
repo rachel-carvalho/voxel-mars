@@ -2,7 +2,6 @@ deploy: build upload clean
 
 build:
 	browserify -t coffeeify ./client/index.coffee | uglifyjs > ./public/js/index.js
-	browserify -t coffeeify ./client/worker.coffee | uglifyjs > ./public/js/worker.js
 
 upload:
 	s3cmd sync --delete-removed --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
@@ -35,6 +34,6 @@ slice-map:
 	coffee ./slice.coffee
 
 clean:
-	rm ./public/js/index.js ./public/js/worker.js
+	rm ./public/js/index.js
 
 .PHONY: build, upload, deploy, upload-dry, download-map, slice-map, clean

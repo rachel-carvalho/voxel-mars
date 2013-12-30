@@ -1,9 +1,16 @@
+common = require './common.coffee'
+worker = require './worker.coffee'
+blobURL = window.URL.createObjectURL(new Blob(["
+  var getHeightFromColor = (#{common.getHeightFromColor});
+  (#{worker})();
+  "]))
+
 WorkCrew = require '../public/js/workcrew.js'
 
 class Chunk
   @loadedZones = {}
 
-  @crew = new WorkCrew '/js/worker.js', 2
+  @crew = new WorkCrew blobURL, 2
 
   @underWork = {}
 
