@@ -1,6 +1,5 @@
 window.log = -> console.log.apply console, arguments
 
-voxel = require 'voxel'
 vengine = require 'voxel-engine'
 vplayer = require 'voxel-player'
 vwalk = require 'voxel-walk'
