@@ -3,6 +3,9 @@ window.log = -> console.log.apply console, arguments
 vengine = require 'voxel-engine'
 vplayer = require 'voxel-player'
 vwalk = require 'voxel-walk'
+vsky = require 'voxel-sky'
+marsSky = require './sky.coffee'
+
 mapData = require '../maps/mars/map.coffee'
 {getHeightFromColor} = require './common.coffee'
 
@@ -55,9 +58,15 @@ $ ->
     chunkDistance: map.chunkDistance
     worldOrigin: origin
     controls: {discreteFire: true}
-    skyColor: map.skyColor
+    lightsDisabled: yes
 
   game.appendTo worldDiv[0]
+
+  createSky = vsky
+    game: game
+    size: (game.worldWidth() * 3) * 0.8
+
+  sky = createSky marsSky
 
   if game.notCapable()
     welcome.hide()
@@ -114,7 +123,8 @@ $ ->
 
   position = null
 
-  game.on 'tick', ->
+  game.on 'tick', (dt) ->
+    time = sky(dt).time
     vwalk.render(target.playerSkin)
     vx = Math.abs(target.velocity.x)
     vz = Math.abs(target.velocity.z)

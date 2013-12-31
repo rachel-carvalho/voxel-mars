@@ -35,7 +35,6 @@ module.exports =
   startPosition: 'biblisTholus'
   chunkSize: 32
   chunkDistance: 3
-  skyColor: 0xf2c8b8
   # how each img file is divided in zones (defaults to 1x1)
   zones:
     cols: 4
