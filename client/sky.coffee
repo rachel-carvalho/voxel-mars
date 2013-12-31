@@ -18,6 +18,9 @@ sky =
   until: no
   last: 0
 
+  sun: no
+  stars: yes
+
 module.exports = (time) ->
   my = sky
   hour = Math.round(time / 50) * 50
@@ -26,12 +29,23 @@ module.exports = (time) ->
 
   game = @game
 
-  timeout = (code, ms) -> game.setTimeout code, ms || 100
+  timeout = (code, args, ms) -> 
+    game.setTimeout(-> 
+      code.apply this, args
+    , ms || 100)
+
+  prevHour = 0
 
   # run initialization once
   if my.init
     my.init.call this
     delete my.init
+    # hours with a color defined
+    my.allhours = (parseInt(k, 10) for k, v of my.hours)
+    for h, i in my.allhours
+      if hour < h and i > 0
+        prevHour = my.allhours[i - 1]
+        break
   
   # switch color based on time of day
   # maybe make this next part into a helper function
@@ -40,42 +54,49 @@ module.exports = (time) ->
       @color my.hours[hour].color, (if speed > 9 then 100 else 1000)
       my.until = hour + 100
   my.until = false if my.until is hour
+
+  if prevHour
+    @color my.hours[prevHour].color, 1
   
   # fade stars in and out
-  if time is 500
+  if time is 500 or (my.stars and 500 <= prevHour < 1800)
     @paint ['top', 'left', 'right', 'front', 'back'], ->
       @material.transparent = true
-      mat = @material
-      i = ->
+      starsi = (mat) ->
         mat.opacity -= 0.1
-        timeout(i) if mat.opacity > 0
-      timeout(i)
+        timeout(starsi, [mat]) if mat.opacity > 0
+      if time is 500
+        timeout starsi, [@material]
+      else
+        @material.opacity = 0
 
   if time is 1800
     @paint ['top', 'left', 'right', 'front', 'back'], ->
       @material.transparent = true
-      mat = @material
-      i = ->
+      starsi = (mat) ->
         mat.opacity += 0.1
-        timeout(i) if mat.opacity < 1
-      timeout(i)
+        if mat.opacity < 1
+          timeout(starsi, [mat])
+      timeout starsi, [@material]
   
   # turn on sunlight
-  if time is 500
+  if time is 500 or (not my.sun and 500 <= prevHour < 1800)
     sunlight = @sunlight
-    log sunlight.intensity
-    i = ->
+    suni = ->
       sunlight.intensity += 0.1
-      timeout(i) if sunlight.intensity < 0.5
-    timeout(i)
+      timeout(suni) if sunlight.intensity < 0.5
+    if time is 500
+      timeout(suni)
+    else
+      sunlight.intensity = 0.5
   
   # turn off sunlight
   if time is 1800
     sunlight = @sunlight
-    i = ->
+    suni = ->
       sunlight.intensity -= 0.1
-      timeout(i) if sunlight.intensity > 0
-    timeout(i)
+      timeout(suni) if sunlight.intensity > 0
+    timeout(suni)
   
   # spin the sky 1 revolution per day
   @spin Math.PI * 2 * (time / 2400)

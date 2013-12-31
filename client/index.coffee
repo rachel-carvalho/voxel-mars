@@ -65,6 +65,7 @@ $ ->
   createSky = vsky
     game: game
     size: (game.worldWidth() * 3) * 0.8
+    time: 1200
 
   sky = createSky marsSky
 
