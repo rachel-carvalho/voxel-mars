@@ -46,12 +46,14 @@ module.exports = ->
 
           if endY > height >= startY
             anyHeight = yes
-            chunk[getChunkIndex(x, height, z, size)] = 1
 
-            secondLayer = height - 1
-            if secondLayer >= startY
-              chunk[getChunkIndex(x, secondLayer, z, size)] = 1
-    
+            # 3 layers of voxels under the surface
+            for offset in [0..2]
+              y = height - offset
+              if y < startY
+                break
+              chunk[getChunkIndex(x, y, z, size)] = 1
+
     if anyHeight
       chunk
     else
