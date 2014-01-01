@@ -27,7 +27,6 @@ module.exports = (hue) ->
 
     hour = Math.round(time / 50) * 50
     speed = Math.abs(my.last - time)
-    my.last = time
 
     game = @game
 
@@ -61,18 +60,18 @@ module.exports = (hue) ->
       @color my.hours[prevHour].color, 1
     
     # fade stars in and out
-    if time is 500 or (my.stars and 500 <= prevHour < 1800)
+    if my.last < 500 <= time or (my.stars and 500 <= prevHour < 1800)
       @paint ['top', 'left', 'right', 'front', 'back'], ->
         @material.transparent = true
         starsi = (mat) ->
           mat.opacity -= 0.1
           timeout(starsi, [mat]) if mat.opacity > 0
-        if time is 500
+        if my.last < 500 <= time
           timeout starsi, [@material]
         else
           @material.opacity = 0
 
-    if time is 1800
+    if my.last < 1800 <= time
       @paint ['top', 'left', 'right', 'front', 'back'], ->
         @material.transparent = true
         starsi = (mat) ->
@@ -82,24 +81,26 @@ module.exports = (hue) ->
         timeout starsi, [@material]
     
     # turn on sunlight
-    if time is 500 or (not my.sun and 500 <= prevHour < 1800)
+    if my.last < 500 <= time or (not my.sun and 500 <= prevHour < 1800)
       sunlight = @sunlight
       suni = ->
         sunlight.intensity += 0.1
         timeout(suni) if sunlight.intensity < 0.5
-      if time is 500
+      if my.last < 500 <= time
         timeout(suni)
       else
         sunlight.intensity = 0.5
     
     # turn off sunlight
-    if time is 1800
+    if my.last < 1800 <= time
       sunlight = @sunlight
       suni = ->
         sunlight.intensity -= 0.1
         timeout(suni) if sunlight.intensity > 0
       timeout(suni)
     
+    my.last = time
+
     # spin the sky 1 revolution per day
     @spin Math.PI * 2 * (time / 2400)
     
