@@ -4,13 +4,14 @@ vengine = require 'voxel-engine'
 vplayer = require 'voxel-player'
 vwalk = require 'voxel-walk'
 vsky = require 'voxel-sky'
-marsSky = require './sky.coffee'
 
 mapData = require '../maps/mars/map.coffee'
 {getHeightFromColor} = require './common.coffee'
 
 Map = require './map.coffee'
 map = new Map mapData
+
+skyDescription = require('./sky.coffee') map.skyHue
 
 LoadProgress = require './load-progress.coffee'
 Chunk = require './chunk.coffee'
@@ -67,7 +68,7 @@ $ ->
     size: (game.worldWidth() * 3) * 0.8
     time: 1200
 
-  sky = createSky marsSky
+  sky = createSky skyDescription
 
   if game.notCapable()
     welcome.hide()

@@ -5,7 +5,7 @@ class Map
       @datum, @deltaY, @heightScale, @cols, @rows
       @latLngCenter, @pointsOfInterest
       @startPosition, @chunkSize, @zones
-      @chunkDistance, @skyColor
+      @chunkDistance, @skyHue
     } = data
 
     # defaults
