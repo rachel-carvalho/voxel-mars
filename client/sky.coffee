@@ -1,13 +1,29 @@
 module.exports = (hue) ->
   sky = 
-    hours:
-      0: {color: {h: hue, s: 0.3, l: 0}}
-      450: {color: {h: hue, s: 0.3, l: 0.5}}
-      600: {color: {h: hue, s: 0.3, l: 0.7}}
-      1700: {color: {h: hue, s: 0.3, l: 0.5}}
-      1850: {color: {h: hue, s: 0.3, l: 0}}
+    hue: hue
+    sat: 0.3
 
-    init: ->
+    sunrise: 500
+    sunset: 1800
+
+    fullLight: 0.5
+
+    getColorObject: (lum) ->
+      color: h: @hue, s: @sat, l: lum
+
+    createHours: () ->
+      @hours = {}
+
+      @hours[0] = sky.getColorObject 0
+      @hours[sky.sunrise - 50] = sky.getColorObject 0.5
+      @hours[sky.sunrise + 100] = sky.getColorObject 0.7
+      @hours[sky.sunset - 100] = sky.getColorObject 0.5
+      @hours[sky.sunset + 50] = sky.getColorObject 0
+
+    init: (sky) ->
+      # build sky colors per hour object
+      sky.createHours()
+
       # add a sun on the bottom
       @paint('bottom', @sun, 15)
       # add some stars
@@ -39,7 +55,7 @@ module.exports = (hue) ->
 
     # run initialization once
     if my.init
-      my.init.call this
+      my.init.call this, my
       delete my.init
       # hours with a color defined
       my.allhours = (parseInt(k, 10) for k, v of my.hours)
@@ -60,18 +76,18 @@ module.exports = (hue) ->
       @color my.hours[prevHour].color, 1
     
     # fade stars in and out
-    if my.last < 500 <= time or (my.stars and 500 <= prevHour < 1800)
+    if my.last < sky.sunrise <= time or (my.stars and sky.sunrise <= prevHour < sky.sunset)
       @paint ['top', 'left', 'right', 'front', 'back'], ->
         @material.transparent = true
         starsi = (mat) ->
           mat.opacity -= 0.1
           timeout(starsi, [mat]) if mat.opacity > 0
-        if my.last < 500 <= time
+        if my.last < sky.sunrise <= time
           timeout starsi, [@material]
         else
           @material.opacity = 0
 
-    if my.last < 1800 <= time
+    if my.last < sky.sunset <= time
       @paint ['top', 'left', 'right', 'front', 'back'], ->
         @material.transparent = true
         starsi = (mat) ->
@@ -81,18 +97,18 @@ module.exports = (hue) ->
         timeout starsi, [@material]
     
     # turn on sunlight
-    if my.last < 500 <= time or (not my.sun and 500 <= prevHour < 1800)
+    if my.last < sky.sunrise <= time or (not my.sun and sky.sunrise <= prevHour < sky.sunset)
       sunlight = @sunlight
       suni = ->
         sunlight.intensity += 0.1
-        timeout(suni) if sunlight.intensity < 0.5
-      if my.last < 500 <= time
+        timeout(suni) if sunlight.intensity < sky.fullLight
+      if my.last < sky.sunrise <= time
         timeout(suni)
       else
-        sunlight.intensity = 0.5
+        sunlight.intensity = sky.fullLight
     
     # turn off sunlight
-    if my.last < 1800 <= time
+    if my.last < sky.sunset <= time
       sunlight = @sunlight
       suni = ->
         sunlight.intensity -= 0.1
