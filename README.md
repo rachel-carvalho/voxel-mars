@@ -11,7 +11,7 @@ We're loading this data onto the awesome webgl-based [voxel.js](http://voxeljs.c
 
 [![Voxel Mars](http://i.imgur.com/tKvgHfU.jpg)](http://www.voxelmars.com/)
 
-This release is a very early alpha; right now you can freely roam through the entire surface (well, except the poles) of a scaled down Mars; we're using the highest resolution map provided by NASA, at 463 meters per pixel. Since your avatar is ~1.5 voxel high, yes, you're seeing Mars through the eyes of a ~694m tall giant.
+This release is a very early alpha; right now you can freely roam through the entire surface (well, except the poles) of a scaled down Mars; we're using the highest resolution map provided by NASA, at 463 meters per pixel. Since your avatar is ~1.5 voxel high, yes, you're seeing Mars through the eyes of a ~694m tall giant. Still, it would take about 1 hour and 47 minutes, walking non-stop, to go around the world.
 
 Future ideas include:
   - interpolate MOLA data as far as possible to get closer to human scale
