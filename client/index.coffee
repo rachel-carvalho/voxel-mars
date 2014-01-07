@@ -63,18 +63,18 @@ $ ->
 
   game.appendTo worldDiv[0]
 
+  if game.notCapable()
+    welcome.hide()
+    navMap.container.hide()
+    positionElem.hide()
+    return
+
   createSky = vsky
     game: game
     size: (game.worldWidth() * 3) * 0.8
     time: 1200
 
   sky = createSky skyDescription
-
-  if game.notCapable()
-    welcome.hide()
-    navMap.container.hide()
-    positionElem.hide()
-    return
 
   lp = new LoadProgress
     chunkDistance: map.chunkDistance
