@@ -158,6 +158,7 @@ a {
 #map {
   position: absolute;
   z-index: 1;
+  cursor: pointer;
 }
 
 #map.global {
@@ -180,7 +181,6 @@ a {
   right: 20px;
   border-radius: 100px;
   border: 4px solid #fff;
-  cursor: pointer;
 }
 
 #position {

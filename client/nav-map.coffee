@@ -5,6 +5,7 @@ class NavMap
     @vertical = $('#vertical')
     @horizontal = $('#horizontal')
     @lastPosition = null
+    @updateTitle()
 
     @container.click (e) =>
       if @global()
@@ -44,9 +45,15 @@ class NavMap
     @vertical.css {left, height}
 
 
+  updateTitle: ->
+    title = if @global() then 'click to teleport to location (page will be reloaded)' else 'click to open global map'
+    @container.attr 'title', title
+
+
   toggle: (position) ->
     @lastPosition = position
     @container.toggleClass('mini').toggleClass('global')
+    @updateTitle()
     @update position
 
 
