@@ -154,17 +154,31 @@ a {
 #horizontal {
   border-top: 1px solid #fff;
 }
-#map.global img {width: 100%;}
+
+#map {
+  position: absolute;
+  z-index: 1;
+}
+
+#map.global {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #000;
+}
+
+#map.global img {
+  width: 100%;
+}
+
 #map.mini {
   width: 200px;
   height: 200px;
-  display: block;
   overflow: hidden;
-  position: absolute;
   bottom: 20px;
   right: 20px;
   border-radius: 100px;
-  background-color: #000;
   border: 4px solid #fff;
 }
 
@@ -177,6 +191,7 @@ a {
   top: 5px;
   right: 5px;
   font-family: monospace;
+  z-index: 1;
 }
 
 #position li {
@@ -193,3 +208,32 @@ a {
 }
 
 #position a:hover {text-decoration: underline;}
+
+#help-pointer.cover {
+  opacity: 0.5;
+  position: absolute;
+  top: 0; left: 0;
+  bottom: 0; right: 0;
+  background: #000;
+}
+
+#help-pointer-on {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 5px;
+  opacity: 0.7;
+}
+#help-pointer-off {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  text-align: center;
+  font-size: 70px;
+  font-weight: bold;
+}
+
+#help-pointer label {
+  display: inline-block;
+}

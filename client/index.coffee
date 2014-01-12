@@ -31,8 +31,27 @@ getHashParams = ->
 
   params
 
+setPointerLockEvents = (onChange) ->
+  events = {}
+  prefixes = ['', 'webkit', 'moz']
+  fn = (e) ->
+    locked = no
+    for prefix in prefixes
+      locked = locked or !!document["#{prefix}PointerLockElement"]
+      break if locked
+    
+    onChange.apply this, [e, locked]
+
+  for prefix in prefixes
+    events["#{prefix}pointerlockchange"] = fn
+  $(document).on events
+
+  fn()
+
+
 $ ->
   worldDiv = $('#world')
+  worldElem = worldDiv[0]
   welcome = $('#welcome')
   progress = $('#welcome progress')
   playButton = $('#play')
@@ -47,6 +66,10 @@ $ ->
   permalink = $('#permalink')
   help = $('#help')
 
+  helpPointer = $('#help-pointer')
+  helpPointerOn = $('#help-pointer-on')
+  helpPointerOff = $('#help-pointer-off')
+
   map.setStartPoint getHashParams()
 
   origin = map.getOrigin()
@@ -59,8 +82,9 @@ $ ->
     worldOrigin: origin
     controls: {discreteFire: true}
     lightsDisabled: yes
+    interactElement: worldElem
 
-  game.appendTo worldDiv[0]
+  game.appendTo worldElem
 
   if game.notCapable()
     welcome.hide()
@@ -171,6 +195,11 @@ $ ->
   help.click (e) ->
     e.preventDefault()
     togglePause()
+
+  setPointerLockEvents (e, locked) ->
+    helpPointerOn.toggle locked
+    helpPointerOff.toggle !locked
+    helpPointer.toggleClass 'cover', !locked
 
   game.voxels.on 'missingChunk', (coords) ->
     new Chunk {map, coords, game, lp}
