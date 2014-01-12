@@ -119,6 +119,8 @@ $ ->
 
     target = game.controls.target()
 
+    navMap.setPosition target.position
+
     game.paused = no
 
   spawnInfo = 

@@ -180,6 +180,7 @@ a {
   right: 20px;
   border-radius: 100px;
   border: 4px solid #fff;
+  cursor: pointer;
 }
 
 #position {

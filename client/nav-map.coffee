@@ -1,13 +1,20 @@
 class NavMap
   constructor: (@map) ->
-      @container = $('#map')
-      @img = $('#map img')
-      @vertical = $('#vertical')
-      @horizontal = $('#horizontal')
+    @container = $('#map')
+    @img = $('#map img')
+    @vertical = $('#vertical')
+    @horizontal = $('#horizontal')
+    @lastPosition = null
 
-      @container.click (e) =>
-        if @container.hasClass 'global'
-          @onGlobalClick e
+    @container.click (e) =>
+      if @global()
+        @onGlobalClick e
+      else if @mini()
+        @onMiniClick e
+
+
+  global: ->
+    @container.hasClass 'global'
 
 
   mini: ->
@@ -38,6 +45,7 @@ class NavMap
 
 
   toggle: (position) ->
+    @lastPosition = position
     @container.toggleClass('mini').toggleClass('global')
     @update position
 
@@ -50,5 +58,12 @@ class NavMap
     location.hash = "#lat=#{latLng.lat}&lng=#{latLng.lng}"
     location.reload()
 
+
+  onMiniClick: (e) ->
+    @toggle @lastPosition
+
+
+  setPosition: (pos) ->
+    @lastPosition = pos
 
 module.exports = NavMap
