@@ -53,7 +53,6 @@ $ ->
 
   game = app.game = vengine
     materials: [map.name]
-    materialFlatColor: no
     generateChunks: no
     chunkSize: map.chunkSize
     chunkDistance: map.chunkDistance
