@@ -12,12 +12,12 @@ build:
 upload:
 	s3cmd sync --add-header "Cache-Control: no-cache, no-store, must-revalidate" --add-header "Pragma: no-cache" --add-header "Expires: 0" --acl-public public/index.html s3://www.voxelmars.com/
 	s3cmd sync --add-header "Content-Encoding: gzip" --mime-type="application/javascript" --acl-public public/js/index.*.js s3://www.voxelmars.com/js/
-	s3cmd sync --delete-removed --exclude 'style.css' --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
+	s3cmd sync --delete-removed --exclude 'style.css' --exclude 'index.js' --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
 
 upload-dry:
 	s3cmd sync --dry-run --add-header "Cache-Control: no-cache, no-store, must-revalidate" --add-header "Pragma: no-cache" --add-header "Expires: 0" --acl-public public/index.html s3://www.voxelmars.com/
 	s3cmd sync --dry-run --add-header "Content-Encoding: gzip" --mime-type="application/javascript" --acl-public public/js/index.*.js s3://www.voxelmars.com/js/
-	s3cmd sync --dry-run --delete-removed --exclude 'style.css' --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
+	s3cmd sync --dry-run --delete-removed --exclude 'style.css' --exclude 'index.js' --exclude '*.img' --exclude '.DS_Store' public/ s3://www.voxelmars.com/
 
 NASA_URL = http://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg128
 MAP_PATH = ./maps/mars/heightmap

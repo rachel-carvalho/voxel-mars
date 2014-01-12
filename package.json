@@ -2,7 +2,6 @@
   "name": "voxel-mars",
   "version": "0.0.1",
   "description": "A voxel.js world generated from real Mars topography data",
-  "main": "app.coffee",
   "repository": {
     "type": "git",
     "url": "https://github.com/rachel-carvalho/voxel-mars.git"
@@ -12,14 +11,18 @@
     "voxel-engine": "0.20.0",
     "voxel-player": "0.1.0",
     "voxel-walk": "0.0.5",
-    "express": "3.4.6",
-    "coffeeify": "0.5.1",
-    "browserify-middleware": "1.12.0",
     "voxel-sky": "0.3.0"
   },
   "devDependencies": {
     "pngjs": "0.4.0-alpha",
-    "fs-extra": "0.8.1"
+    "fs-extra": "0.8.1",
+    "uglify-js": "2.4.7",
+    "coffeeify": "0.5.1",
+    "browserify": "3.19.1",
+    "beefy": "0.7.1"
+  },
+  "scripts": {
+    "start": "cd public/ && beefy js/index.js 3000 -- -t coffeeify"
   },
   "author": {
     "name": "Rachel Carvalho",

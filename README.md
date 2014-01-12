@@ -20,7 +20,7 @@ Future ideas include:
 
   - a science-based (no dragons) survival mode on which you have to generate your oxygen and fuel, extract your water, grow your food, make martian bricks, etc
 
-  - use voxel-sky to add the sun, phobos and deimos
+  - use voxel-sky to add phobos and deimos
 
   - open Google Mars in your location
 
@@ -59,10 +59,10 @@ Slice them into smaller PNG files (should take less than 10 minutes)
 make slice-map
 ```
 
-Run the server locally
+Run with
 
 ```
-coffee app.coffee
+npm start
 ```
 
 And that's it! Go to http://localhost:3000/ and enjoy!
