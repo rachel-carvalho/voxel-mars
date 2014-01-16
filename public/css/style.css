@@ -14,27 +14,31 @@ a {
 }
 
 #wrapper {
-  width: 670px;
-  margin: 0 auto;
-  overflow: hidden;
+  margin-top: 250px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 600px;
 }
 
 #welcome {
   position: absolute;
   top: 0; left: 0;
   right: 0; bottom: 0;
-  background: #000;
+  background: #000 url(/maps/mars/welcome.jpg);
+  background-repeat: no-repeat;
+  background-position: center 0;
   z-index: 2;
   text-align: center;
 }
 
 #welcome h1 {
-  font-size: 65px;
-  margin: 10px 0 40px;
+  text-align: center;
+  font-size: 96px;
+  margin: 0 0 40px 0;
 }
 
 #welcome h1 .mars {
-  color: #F23400;
+  color: #fa5a20;
 }
 
 #welcome p {
@@ -43,11 +47,11 @@ a {
 
 #welcome h1, #play {
   font-family: Futura, Trebuchet MS, sans-serif;
-  font-weight: normal;
+  font-weight: bold;
   text-transform: uppercase;
 }
 
-#welcome h1, #welcome p, #welcome ul, #welcome li { text-align: left; }
+#welcome p, #welcome ul, #welcome li { text-align: left; }
 
 #welcome progress {
   position: absolute;
@@ -74,7 +78,7 @@ a {
 }
 
 #controls, #description {
-  width: 48%;
+  width: 54%;
 }
 
 #controls li {
@@ -112,14 +116,17 @@ a {
 }
 
 #play {
+  position: absolute;
+  right: 20px;
+  bottom: 25px;
   color: #fff;
   font-size: 32px;
-  background: #DB4400;
+  background: #fa5a20;
   border: 0;
   padding: 0.5em 1em;
   border-radius: 5px;
   cursor: pointer;
-  margin-top: 50px;
+  margin-top: 30px;
   clear: both;
 }
 
@@ -130,7 +137,7 @@ a {
 }
 
 #play:not([disabled]):hover {
-  background: #F55E1A;
+  background: #f93e00;
 }
 
 #world {
