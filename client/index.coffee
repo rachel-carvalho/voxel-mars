@@ -87,9 +87,13 @@ $ ->
   game.appendTo worldElem
 
   if game.notCapable()
-    welcome.hide()
-    navMap.container.hide()
-    positionElem.hide()
+    $('#controls, #share').hide()
+    playButton.hide()
+    progress.hide()
+    $('#webgl-incapable').show()
+    #welcome.hide()
+    #navMap.container.hide()
+    #positionElem.hide()
     return
 
   createSky = vsky
