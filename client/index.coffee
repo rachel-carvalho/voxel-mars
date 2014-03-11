@@ -82,6 +82,7 @@ $ ->
     worldOrigin: origin
     controls: {discreteFire: true}
     lightsDisabled: yes
+    antialias: no
     interactElement: worldElem
 
   game.appendTo worldElem

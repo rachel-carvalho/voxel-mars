@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "minecraft-skin": "rachel-carvalho/minecraft-skin",
-    "voxel-engine": "0.20.0",
+    "voxel-engine": "git://github.com/wintermutt/voxel-engine.git#antialias-link",
     "voxel-player": "0.1.0",
     "voxel-walk": "0.0.5",
     "voxel-sky": "0.3.0"
