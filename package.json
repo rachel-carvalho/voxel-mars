@@ -1,6 +1,6 @@
 {
   "name": "voxel-mars",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A voxel.js world generated from real Mars topography data",
   "repository": {
     "type": "git",
