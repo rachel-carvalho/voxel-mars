@@ -43,9 +43,14 @@ download-map:
 slice-map:
 	coffee ./slice.coffee
 
+prepare:
+	cp ./maps/mars/map.jpg ./public/maps/mars/map.jpg
+	cp ./maps/mars/welcome.jpg ./public/maps/mars/welcome.jpg
+	cp ./maps/mars/screenshot.jpg ./public/maps/mars/screenshot.jpg
+
 clean:
 	sed -i '' -e 's/"\/css\/style.'$(CSS_TS)'.css"/"\/css\/style.css"/' ./public/index.html 
 	sed -i '' -e 's/"\/js\/index.'$(JS_TS)'.js"/"\/js\/index.js"/' ./public/index.html 
 	rm ./public/js/index.*.js ./public/css/style.*.css
 
-.PHONY: build, upload, deploy, upload-dry, download-map, slice-map, clean
+.PHONY: build, upload, deploy, upload-dry, download-map, slice-map, prepare, clean

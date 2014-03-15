@@ -59,6 +59,11 @@ Slice them into smaller PNG files (should take less than 10 minutes)
 make slice-map
 ```
 
+Copy resources to `public` folder
+```
+make prepare
+```
+
 Run with
 
 ```
