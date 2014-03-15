@@ -1,13 +1,6 @@
 .DS_Store
-browserify-bundle.js
-
 node_modules
-
-maps/*/heightmap
-maps/*/*.img
-public/maps/*
-public/js/index.*.js
-public/css/style.*.css
-
 .settings
-.c9revisions
+out
+world/out
+world/src

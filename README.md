@@ -50,18 +50,13 @@ npm i -g coffee-script
 Download the MOLA data (2GB total, might be a good idea to go get a cup of coffee)
 
 ```
-make download-map
+cd world/ && ./download.sh && cd ..
 ```
 
 Slice them into smaller PNG files (should take less than 10 minutes)
 
 ```
-make slice-map
-```
-
-Copy resources to `public` folder
-```
-make prepare
+cd world/ && coffee slice.coffee && cd ..
 ```
 
 Run with

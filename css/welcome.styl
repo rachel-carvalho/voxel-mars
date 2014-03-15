@@ -1,0 +1,92 @@
+#welcome
+  padding-top: 220px
+  text-align: center
+  position: absolute
+  top: 0; left: 0
+  right: 0; bottom: 0
+  background: #000 url('/world/welcome.jpg')
+  background-repeat: no-repeat
+  background-position: center -30px
+  z-index: 2
+
+  .title
+    font-size: 96px
+    margin: 0
+    color: #fff
+    font-weight: lighter
+    .mars
+      color: #fa5a20
+      font-weight: bold
+
+  .description { margin-top: -10px; margin-bottom: 30px }
+
+  .title, .play
+    font-family: Futura, Trebuchet MS, sans-serif
+    text-transform: uppercase
+
+  .screenshot { max-width: 100%; margin-right: 30px }
+
+  progress
+    position: fixed
+    bottom: 0
+    left: 0
+    width: 100%
+    height: 7px
+    -webkit-appearance: none
+    -moz-appearance: none
+    appearance: none
+    border: none
+    background-color: #333
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset
+
+  progress[value]::-webkit-progress-bar
+    background-color: #333
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset
+
+  progress[value]::-webkit-progress-value
+    background: #e18728
+
+  progress[value]::-moz-progress-bar
+    background: #e18728
+
+  footer
+    font-size: 14px
+    color: #ccc
+    margin-top: 10px
+    p, img
+      vertical-align: middle
+    p
+      display: inline-block
+      margin-right: 20px
+
+  .share { position: fixed; left: 20px; bottom: 30px }
+
+  .webgl-incapable
+    display: none
+    font-size: 28px
+    margin-top: 20px
+    padding-bottom: 20px
+
+    h1 { color: #fff; font-size: 56px; text-transform: uppercase }
+
+  .play
+    position: fixed
+    right: 20px
+    bottom: 25px
+    color: #fff
+    font-size: 32px
+    background: #fa5a20
+    border: 0
+    padding: 0.5em 1em
+    border-radius: 5px
+    cursor: pointer
+    margin-top: 30px
+    font-weight: bold
+
+  .play[disabled]
+    opacity: 0.4
+    color: #ccc
+    cursor: default
+
+  .play:not([disabled]):hover
+    background: #f93e00

@@ -1,0 +1,30 @@
+#welcome
+  h1.title
+    | Voxel 
+    span.mars Mars
+
+  p.description
+    | A global-scale reproduction of the red planet, using topographic data from 
+    a(href="http://en.wikipedia.org/wiki/Mars_Orbiter_Laser_Altimeter") MOLA.
+  
+  img.screenshot(src="/world/screenshot.jpg")
+
+  footer
+    p
+      | Source and more info on 
+      a(href="//github.com/rachel-carvalho/voxel-mars")
+        img(src="/github.png", alt="GitHub")
+    
+    p
+      | Written by 
+      a(href="https://twitter.com/racheltostring")
+        img(src="/twitter.png", alt="@racheltostring")
+    
+    .webgl-incapable
+      h1 Your browser can't into 3D :(
+      p You need <a href="http://get.webgl.org/">WebGL</a> to play with Voxel Mars.
+    
+  button.play(disabled="true") loading...
+  
+  progress(value=0)
+
