@@ -27,7 +27,7 @@ map.rows ?= 1
 map.fullwidth = map.width * map.cols
 map.fullheight = map.height * map.rows
 
-{zones} = map.renderOptions
+zones = map.zones
 zones ?= {}
 zones.cols ?= 1
 zones.rows ?= 1
