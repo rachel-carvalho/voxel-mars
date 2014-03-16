@@ -20,9 +20,13 @@ class NavMaps
       @container.el.classList.add 'global'
 
   click: (e) =>
-    pos = @world.voxely(x: e.pageX / @img.width() * @world.width, z: e.pageY / @img.height() * @world.height).toLatLng()
-    window.location = "#lat=#{pos.lat}&lng=#{pos.lng}"
-    window.location.reload()
+    if not @global
+      @toggle()
+      e.stopPropagation()
+    else
+      pos = @world.voxely(x: e.pageX / @img.width() * @world.width, z: e.pageY / @img.height() * @world.height).toLatLng()
+      window.location = "#lat=#{pos.lat}&lng=#{pos.lng}"
+      window.location.reload()
 
   update: (pos) ->
     if not @lastUpdate or +new Date() - @lastUpdate > 100
