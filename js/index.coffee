@@ -34,6 +34,8 @@ class Game
 
         @camera = @createCamera(@scene, @avatar)
 
+        @headLamp = @createHeadLamp(@camera)
+
         @controls = new Controls(this, @container, @camera)
         
         @physics = @createPhysics(@avatar, @camera, @controls)
@@ -116,6 +118,16 @@ class Game
     scene.add camera.yaw
     
     camera
+
+  createHeadLamp: (camera) ->
+    camera.headLamp = new THREE.SpotLight 0xffffff
+    camera.headLamp.distance = @world.voxelSize * 10
+    camera.headLamp.target.position.z = -@world.voxelSize
+
+    camera.pitch.add camera.headLamp.target
+    camera.pitch.add camera.headLamp
+
+    camera.headLamp
 
   createPhysics: (avatar, camera, controls) ->
     physics = new Physics {

@@ -6,11 +6,11 @@ class Clock
     @minutesPerSol = 24
     @startingHour = 7
 
-    @three = new THREE.Clock()
+    @threeClock = new THREE.Clock()
 
-  getDelta: -> @three.getDelta()
+  getDelta: -> @threeClock.getDelta()
 
-  getElapsedGameSecs: -> @three.getElapsedTime() / (@minutesPerSol / 24 / 60)
+  getElapsedGameSecs: -> @threeClock.getElapsedTime() / (@minutesPerSol / 24 / 60)
   getElapsedGameMins: -> @getElapsedGameSecs() / 60
   getElapsedGameHours: -> (@getElapsedGameMins() / 60) + @startingHour
 
