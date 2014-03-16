@@ -16,4 +16,9 @@ stylus -c css/index.styl -p > out/css/index.$CSS_TS.css
 echo 'jade > html...'
 jade -p html/index.jade -O "{css: 'index.$CSS_TS.css', js: 'index.$JS_TS.js'}" < html/index.jade > out/index.html
 
+echo "copying files to out/"
+cp -R static/ out/
+cp -R world/static/ out/world/
+cp -R world/out/ out/world/
+
 echo 'done'
