@@ -34,7 +34,7 @@ class Game
 
         @camera = @createCamera(@scene, @avatar)
 
-        @headLamp = @createHeadLamp(@camera)
+        @headLamp = @createHeadLamp(@scene, @camera)
 
         @controls = new Controls(this, @container, @camera)
         
@@ -61,7 +61,7 @@ class Game
     scene.ambientLight = al = new THREE.AmbientLight(0xcccccc)
     scene.add al
 
-    scene.directionalLight = dl = new THREE.DirectionalLight(0xffffff, 2)
+    scene.directionalLight = dl = new THREE.DirectionalLight(0xffffff, 1.5)
     dl.position.set(1, 1, -0.5).normalize()
     scene.add dl
     
@@ -119,15 +119,16 @@ class Game
     
     camera
 
-  createHeadLamp: (camera) ->
-    camera.headLamp = new THREE.SpotLight 0xffffff
-    camera.headLamp.distance = @world.voxelSize * 10
-    camera.headLamp.target.position.z = -@world.voxelSize
+  createHeadLamp: (scene, camera) ->
+    scene.headLamp = new THREE.SpotLight 0xffffff, 2
+    scene.headLamp.distance = @world.voxelSize * 20
+    scene.headLamp.position.z = @world.voxelSize
+    scene.headLamp.target.position.z = -(@world.voxelSize / 10)
 
-    camera.pitch.add camera.headLamp.target
-    camera.pitch.add camera.headLamp
+    camera.pitch.add scene.headLamp.target
+    camera.pitch.add scene.headLamp
 
-    camera.headLamp
+    @scene.headLamp
 
   createPhysics: (avatar, camera, controls) ->
     physics = new Physics {

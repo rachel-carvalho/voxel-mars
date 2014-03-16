@@ -2,7 +2,7 @@ THREE = require './three/three-r65.js'
 
 class Light
   constructor: (@scene, @renderer, @clock) ->
-    @minBrightness = 0.1
+    @minBrightness = 0
 
     @fog = @scene.fog.color.clone()
     @directional = @scene.directionalLight.color.clone()
@@ -19,6 +19,8 @@ class Light
     @setColorBrightness @scene.fog.color, @fog, factor
     @setColorBrightness @scene.directionalLight.color, @directional, factor
     @setColorBrightness @scene.ambientLight.color, @ambient, factor
+    @scene.ambientLight.visible = factor > 0
+    @scene.headLamp.visible = factor < 0.4
     @renderer.setClearColor @setColorBrightness(new THREE.Color(), @sky, factor)
 
   update: ->

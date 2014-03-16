@@ -20,7 +20,7 @@ class Mesher
     texture.minFilter = THREE.LinearMipMapLinearFilter
 
     new THREE.MeshLambertMaterial
-      map: texture, ambient: 0xbbbbbb, vertexColors: THREE.VertexColors
+      map: texture, ambient: 0xbbbbbb, vertexColors: THREE.VertexColors, wrapAround: true
 
 
   createGeometry: ->
