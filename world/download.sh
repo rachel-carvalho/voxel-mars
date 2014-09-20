@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+mkdir src
+mkdir src/navigation
+mkdir src/height
+
 curl http://marsoweb.nas.nasa.gov/globalData/images/fullscale/MOLA_cylin.jpg -o src/navigation/navigation.jpg
 
 download () {
