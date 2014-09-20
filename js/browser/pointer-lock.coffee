@@ -1,13 +1,17 @@
 class PointerLock
   constructor: (@element) ->
-    if @element.requestPointerLock then @prefix = ''
+    request = @element.requestPointerLock
+
+    if @element.requestPointerLock 
+      @prefix = ''
     else
       for vendor in ['moz', 'webkit', 'o', 'ms']
         @prefix = vendor if @element["#{vendor}RequestPointerLock"]
-        
-    if not @prefix then @capable = no
-    else
-      @capable = yes
+        request = request || @element["#{vendor}RequestPointerLock"]
+
+    @capable = request? && request
+
+    if @capable 
       @locked = => @element is @getElement()
 
       if @prefix is ''
