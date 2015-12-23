@@ -161,6 +161,9 @@ class Game
     if @debug then $('.debug').hide() else $('.debug').show()
     @debug = not @debug
 
+  googleMars: ->
+    window.location = 'https://www.google.com/mars/#lat=' + @infoPanel.lat.el.textContent + '&lon=' + @infoPanel.lng.el.textContent + '&zoom=4'
+
   resize: =>
     {innerWidth, innerHeight} = window
 
