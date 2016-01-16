@@ -39,22 +39,16 @@ git clone https://github.com/rachel-carvalho/voxel-mars.git
 npm i
 ```
 
-Install coffee-script globally
-
-```
-npm i -g coffee-script
-```
-
 Download the MOLA data (2GB total, might be a good idea to go get a cup of coffee)
 
 ```
-cd world/ && ./download.sh && cd ..
+npm run download
 ```
 
 Slice them into smaller PNG files (should take less than 10 minutes)
 
 ```
-cd world/ && coffee slice.coffee && cd ..
+npm run slice
 ```
 
 Run with

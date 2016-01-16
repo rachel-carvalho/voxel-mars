@@ -11,25 +11,28 @@
     "email": "rachel.carvalho@gmail.com"
   },
   "license": "MIT",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "pngjs": "2.2.0",
-    "fs-extra": "0.8.1",
-    "uglify-js": "2.4.7",
-    "coffeeify": "0.5.1",
-    "browserify": "12.0.1",
-    "express": "3.4.8",
+    "browserify": "13.0.0",
     "browserify-middleware": "2.2.0",
-    "jade": "1.1.5",
-    "stylus": "0.42.1"
+    "coffeeify": "0.5.1",
+    "express": "3.4.8",
+    "fs-extra": "0.8.1",
+    "jade": "1.11.0",
+    "pngjs": "2.2.0",
+    "stylus": "0.53.0",
+    "uglify-js": "2.6.1"
   },
   "scripts": {
-    "start": "coffee preview.coffee"
+    "start": "coffee preview.coffee",
+    "download": "cd world/ && ./download.sh && cd ..",
+    "slice": "cd world/ && coffee slice.coffee && cd ..",
+    "build": "./build.sh",
+    "upload": "./upload.sh"
   },
   "engines": [
     {
-      "node": "0.10.24"
+      "node": "5.4.1"
     }
   ]
 }
