@@ -18,7 +18,7 @@ class Controls
     key 'm', 'game', => @game.navMaps.toggle()
     key '/', 'game', => @game.toggleDebug()
     key 'esc', 'game', => @game.welcome.show() unless @pointerLock.locked()
-    key 'g', 'game', => @game.googleMars()
+    key 'g', 'game', => @game.openGoogleMars()
 
   movingForward: -> key.getScope() is 'game' and (key.isPressed('up') or key.isPressed('w'))
   movingLeft: -> key.getScope() is 'game' and (key.isPressed('left') or key.isPressed('a'))

@@ -22,8 +22,6 @@ Future ideas include:
 
   - use voxel-sky to add phobos and deimos
 
-  - open Google Mars in your location
-
   - add every lander and rover ever sent to Mars and put them at their correct locations
 
   - allow player to fly in "tourism" mode
