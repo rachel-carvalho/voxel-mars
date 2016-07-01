@@ -15,7 +15,7 @@ class Mesher
 
 
   createMaterial: ->
-    texture = THREE.ImageUtils.loadTexture("world/ground.png")
+    texture = THREE.ImageUtils.loadTexture('world/ground.png')
     texture.magFilter = THREE.NearestFilter
     texture.minFilter = THREE.LinearMipMapLinearFilter
 
@@ -58,32 +58,32 @@ class Mesher
       faces: [[light, shadow, light], [shadow, shadow, light]]
       rotationY: Math.PI, translation: [0, 0, -50]
       uvs: (fvu) -> [fvu[0][0][0], fvu[0][0][2], fvu[0][1][2]]
-    
+
     @nzVertexColors = (@nzGeometry.faces[i].vertexColors for i in [0..1])
 
 
   generateVoxelGeometry: (opts) ->
     {matrix} = this
     {voxelSize} = @config
-    
+
     g = new THREE.PlaneGeometry(voxelSize, voxelSize)
 
     for i in [0..1]
       g.faces[i].vertexColors.push.apply g.faces[i].vertexColors, opts.faces[i]
-  
+
     uv.y = 0.5 for uv in opts.uvs(g.faceVertexUvs)
-  
+
     g.applyMatrix matrix.makeRotationX(opts.rotationX) if opts.rotationX
     g.applyMatrix matrix.makeRotationY(opts.rotationY) if opts.rotationY
-    
+
     g.applyMatrix matrix.makeTranslation.apply(matrix, opts.translation)
-  
+
     g
 
 
   mergeVoxelGeometry: (voxelGeometry, defaultFaceColors, chunkGeometry, dummy, vertices) ->
     {shadow, light} = this
-    
+
     dummy.geometry = voxelGeometry
 
     for i in [0, 1]
@@ -116,7 +116,7 @@ class Mesher
           h: getY(x, z)
           x: x
           z: z
-          
+
           px: getY(x + 1, z)
           nx: getY(x - 1, z)
           pz: getY(x, z + 1)
@@ -126,11 +126,11 @@ class Mesher
           nxpz: getY(x - 1, z + 1)
           pxnz: getY(x + 1, z - 1)
           nxnz: getY(x - 1, z - 1)
-  
+
     new THREE.Mesh geometry, @material
 
 
-  generateColumn: (opts)->
+  generateColumn: (opts) ->
     {x, z, h} = opts
     {px, nx, pz, nz} = opts
     {pxpz, nxpz, pxnz, nxnz} = opts
@@ -156,7 +156,7 @@ class Mesher
     dummy.position.x = (x * voxelSize)
     dummy.position.y = h * voxelSize
     dummy.position.z = (z * voxelSize)
-    
+
     if opts.top
       @mergeVoxelGeometry pyGeometry, pyVertexColors, geometry, dummy, [
         [0, 0, a is 0], [0, 1, b is 0], [0, 2, d is 0]
@@ -177,10 +177,10 @@ class Mesher
       pzIsSameOrHigher = pz >= h
       pxpzIsSameOrHigher = pxpz >= h
 
-      shadows = 
+      shadows =
         topLeft: pzIsSameOrHigher and pxpzIsSameOrHigher
         topRight: pxnz > px and px is h - 1 and x > first
-      
+
       if diffPX > 1
         pxnzIs1Lower = pxnz is h - 1
 
@@ -191,7 +191,7 @@ class Mesher
         shadows.topRight = shadows.topRight or pxnzIsSameOrHigher
         shadows.bottomLeft = pxpzIs1Lower or shadows.topLeft
 
-        vertices.push [0, 1, shadows.bottomLeft], 
+        vertices.push [0, 1, shadows.bottomLeft],
                       [1, 0, shadows.bottomLeft],
                       [1, 1, shadows.bottomRight]
 
@@ -209,10 +209,10 @@ class Mesher
       nxnzIsSameOrHigher = nxnz >= h
       nxpzIsSameOrHigher = nxpz >= h
 
-      shadows = 
+      shadows =
         topLeft: pzIsSameOrHigher and nxnzIsSameOrHigher
         topRight: nxpzIsSameOrHigher or (nxpz > nx and nx is h - 1 and x < last)
-      
+
       if diffNX > 1
         nxpzIs1Lower = nxpz is h - 1
 
@@ -221,7 +221,7 @@ class Mesher
         shadows.bottomRight = nxpzIs1Lower or nxpzIsSameOrHigher
         shadows.bottomLeft = nxnzIs1Lower or shadows.topLeft
 
-        vertices.push [0, 1, shadows.bottomLeft], 
+        vertices.push [0, 1, shadows.bottomLeft],
                       [1, 0, shadows.bottomLeft],
                       [1, 1, shadows.bottomRight]
 
@@ -231,7 +231,7 @@ class Mesher
 
       @mergeVoxelGeometry nxGeometry, nxVertexColors, geometry, dummy, vertices
 
-    
+
     if diffPZ > 0 or z is last
       vertices = []
 
@@ -239,7 +239,7 @@ class Mesher
       nxpzIsSameOrHigher = nxpz >= h
       pxpzIsSameOrHigher = pxpz >= h
 
-      shadows = 
+      shadows =
         topLeft: nxIsSameOrHigher and nxpzIsSameOrHigher
         topRight: pxpzIsSameOrHigher or (nxpz > pz and pz is h - 1 and z < last)
 
@@ -251,16 +251,16 @@ class Mesher
         shadows.bottomRight = pxpzIs1Lower or pxpzIsSameOrHigher
         shadows.bottomLeft = nxpzIs1Lower or shadows.topLeft
 
-        vertices.push [0, 1, shadows.bottomLeft], 
+        vertices.push [0, 1, shadows.bottomLeft],
                       [1, 0, shadows.bottomLeft],
                       [1, 1, shadows.bottomRight]
 
-      vertices.push [0, 0, shadows.topLeft], 
-                    [0, 2, shadows.topRight], 
+      vertices.push [0, 0, shadows.topLeft],
+                    [0, 2, shadows.topRight],
                     [1, 2, shadows.topRight]
 
       @mergeVoxelGeometry pzGeometry, pzVertexColors, geometry, dummy, vertices
-    
+
 
     if diffNZ > 0 or z is first
       vertices = []
@@ -282,12 +282,12 @@ class Mesher
         shadows.topRight = shadows.topRight or nxnzIsSameOrHigher
         shadows.bottomLeft = pxnzIs1Lower or shadows.topLeft
 
-        vertices.push [0, 1, shadows.bottomLeft], 
+        vertices.push [0, 1, shadows.bottomLeft],
                       [1, 0, shadows.bottomLeft],
                       [1, 1, shadows.bottomRight]
 
-      vertices.push [0, 0, shadows.topLeft], 
-                    [0, 2, shadows.topRight], 
+      vertices.push [0, 0, shadows.topLeft],
+                    [0, 2, shadows.topRight],
                     [1, 2, shadows.topRight]
 
       @mergeVoxelGeometry nzGeometry, nzVertexColors, geometry, dummy, vertices

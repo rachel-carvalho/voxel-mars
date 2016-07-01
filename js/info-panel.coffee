@@ -14,7 +14,7 @@ class InfoPanel
 
       voxely = y: Math.floor threely.y / @world.voxelSize
       latlng = @world.threely(threely).toLatLng()
-      
+
       @sol.html @clock.getSol()
       @time.html @clock.getTimeString()
 

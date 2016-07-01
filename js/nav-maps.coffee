@@ -31,13 +31,13 @@ class NavMaps
   update: (pos) ->
     if not @lastUpdate or +new Date() - @lastUpdate > 100
       @lastUpdate = +new Date()
-  
+
       {width, height} = @img.el
       {voxelSize} = @world
 
       top = Math.floor(pos.z / voxelSize) / @world.height * height
       left = Math.floor(pos.x / voxelSize) / @world.width * width
-      
+
       if @global then @img.css marginLeft: 0, marginTop: 0
       else
         half = @container.width() / 2

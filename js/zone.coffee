@@ -25,5 +25,5 @@ class Zone
 
     i = (zoneWidth * local.z + local.x) << 2
     Math.ceil (@data[i] / 255) * heightScale
-  
+
 module.exports = Zone

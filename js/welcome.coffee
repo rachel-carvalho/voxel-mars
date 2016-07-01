@@ -11,7 +11,7 @@ class Welcome
     @incapableState() unless @webglSupported()
 
     @playButton.click @hide
-    
+
     @show()
 
   show: -> key.setScope(); @container.show()
@@ -24,9 +24,9 @@ class Welcome
   setProgressMax: (max) -> @progressBar.attr {max}
 
   advanceProgress: ->
-    if @progressBar.val() isnt @progressBar.attr('max') 
+    if @progressBar.val() isnt @progressBar.attr('max')
       @progressBar.val @progressBar.val() + 1
-      @readyState() if @progressBar.val() is @progressBar.attr('max') 
+      @readyState() if @progressBar.val() is @progressBar.attr('max')
 
   incapableState: ->
     @webglIncapable.show()

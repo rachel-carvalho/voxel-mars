@@ -3,7 +3,7 @@ THREE = require './three/three-r65.js'
 class Physics
   constructor: (params) ->
     {@avatar, @camera, @controls, @getAvatarY, @threelyToVoxely} = params
-    
+
     @canJump = no
 
     @velocity = new THREE.Vector3()
@@ -27,7 +27,7 @@ class Physics
   getBounds2D: (mesh, vel) ->
     w = mesh.geometry.width
     d = mesh.geometry.depth
-    
+
     bounds = []
 
     for x in [0, 1]
@@ -64,7 +64,7 @@ class Physics
 
     # new voxel and floor
     {newVoxelsP, newFloor, newFloorIsHigherAndPositionIsntEnough, p} = @predictPositions rotatedVelocity, floor
-    
+
     resetVelocity =
       x: false
       z: false
@@ -82,7 +82,7 @@ class Physics
           originalVoxely = voxelP.voxely
           newVoxely = newVoxelP.voxely
 
-          # if has changed voxel in any bounds and new voxel is higher 
+          # if has changed voxel in any bounds and new voxel is higher
           if originalVoxely[axis] isnt newVoxely[axis] and newVoxelP.height > voxelP.height
             other = if axis is 'x' then 'z' else 'x'
 
@@ -96,7 +96,7 @@ class Physics
             rotatedVelocity[axis] = 0
             resetVelocity[axis] = true
             break
-        
+
       # re-run predictions after each axis
       {newVoxelsP, newFloor, newFloorIsHigherAndPositionIsntEnough, p} = @predictPositions rotatedVelocity, floor
 
@@ -115,29 +115,29 @@ class Physics
     delta *= 100
 
     deceleration = Math.min(@walkDeceleration * delta, @maxDeceleration)
-    
+
     @velocity.x += (-@velocity.x) * deceleration
     @velocity.z += (-@velocity.z) * deceleration
-    
+
     @velocity.y -= 0.08 * delta
-    
+
     if @controls.jumping()
       @velocity.y += @jumpHeight if @canJump
       @canJump = no
-    
+
     speed = Math.min(@walkSpeed * delta, @maxWalkSpeed)
-    
+
     @velocity.z -= speed if @controls.movingForward()
     @velocity.z += speed if @controls.movingBackward()
     @velocity.x -= speed if @controls.movingLeft()
     @velocity.x += speed if @controls.movingRight()
-    
+
     rotatedVelocity = @getRotatedVelocity()
-    
+
     voxelsP = @getBounds2D(@avatar)
-    
+
     @avoidCollisions rotatedVelocity, @getHighestFloor(voxelsP), voxelsP, false
-    
+
     @setRotatedVelocity rotatedVelocity
     @camera.yaw.position.add rotatedVelocity
 

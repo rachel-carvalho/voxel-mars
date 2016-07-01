@@ -6,13 +6,13 @@ class Chunk
 
     Chunk.mesher ?= new Mesher(voxelSize, chunkSize)
 
-    startZ = position.z * chunkSize
-    startX = position.x * chunkSize
-    
+    startZ = @position.z * chunkSize
+    startX = @position.x * chunkSize
+
     endZ = startZ + chunkSize
     endX = startX + chunkSize
 
-    @mesh = Chunk.mesher.generate 
+    @mesh = Chunk.mesher.generate
       zArray: [startZ...endZ]
       xArray: [startX...endX]
       getY: (x, z) => @world.getY(x, z)

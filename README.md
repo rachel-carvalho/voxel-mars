@@ -45,7 +45,7 @@ Download the MOLA data (2GB total, might be a good idea to go get a cup of coffe
 npm run download
 ```
 
-Slice them into smaller PNG files (should take less than 10 minutes)
+Slice them into smaller PNG files (should take less than 4 minutes)
 
 ```
 npm run slice
@@ -57,4 +57,4 @@ Run with
 npm start
 ```
 
-And that's it! Go to http://localhost:3000/ and enjoy!
+And that's it! Go to [http://localhost:3000/](http://localhost:3000/) and enjoy!

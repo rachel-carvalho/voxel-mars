@@ -17,7 +17,7 @@ NavMaps = require './nav-maps.coffee'
 
 class Game
   constructor: ->
-    @container = $("#world")
+    @container = $('#world')
     @welcome = new Welcome(this)
 
     @world = new World this,
@@ -37,7 +37,7 @@ class Game
         @headLamp = @createHeadLamp(@scene, @camera)
 
         @controls = new Controls(this, @container, @camera)
-        
+
         @physics = @createPhysics(@avatar, @camera, @controls)
 
         @stats = @createStats(@container)
@@ -64,7 +64,7 @@ class Game
     scene.directionalLight = dl = new THREE.DirectionalLight(0xffffff, 1.5)
     dl.position.set(1, 1, -0.5).normalize()
     scene.add dl
-    
+
     scene
 
   createRenderer: (container) ->
@@ -75,7 +75,7 @@ class Game
     renderer.setSize innerWidth, innerHeight
 
     container.el.appendChild renderer.domElement
-    
+
     renderer
 
   createAvatar: ->
@@ -97,7 +97,7 @@ class Game
   createCamera: (scene, avatar) ->
     {innerWidth, innerHeight} = window
     {voxelSize} = @world
-    
+
     camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 20000)
 
     camera.rotation.set 0, 0, 0
@@ -116,7 +116,7 @@ class Game
     camera.yaw.position.set threely.x, @world.getAvatarY(voxely.x, voxely.z), threely.z
 
     scene.add camera.yaw
-    
+
     camera
 
   createHeadLamp: (scene, camera) ->
@@ -136,7 +136,7 @@ class Game
       threelyToVoxely: (c) => @world.threely(c).toVoxely()
       getAvatarY: (x, z) => @world.getAvatarY(x, z)
     }
-      
+
     physics
 
   createStats: (container) ->
@@ -145,7 +145,7 @@ class Game
     stats.domElement.style.bottom = '0px'
     stats.domElement.classList.add 'debug'
     container.el.appendChild stats.domElement
-    
+
     stats
 
   createRendererStats: (container) ->

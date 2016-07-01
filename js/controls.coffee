@@ -36,7 +36,7 @@ class Controls
 
       @camera.yaw.rotation.y -= x * 0.002
       @camera.pitch.rotation.x -= y * 0.002
-      
+
       {max, min, PI} = Math
       @camera.pitch.rotation.x = max(-PI / 2, min(PI / 2, @camera.pitch.rotation.x))
 

@@ -62,12 +62,12 @@ class World
   update: (currentThreelyPosition) ->
     newp = @threely(currentThreelyPosition).toChunky()
     oldp = @currentChunkyPosition
-    
+
     # if chunky position changed
     if not oldp or oldp.x isnt newp.x or oldp.z isnt newp.z
       @currentChunkyPosition = newp
       oldp ?= newp
-      
+
       @updateTodo(oldp, newp)
 
     @executeTodo()
@@ -106,14 +106,14 @@ class World
 
             if not zone then @createZone chunky.toZoney()
             else if not zone.loading then @createChunk(chunky)
-  
+
       @lastTodoExecution = +new Date()
 
   createZone: (position, cb) ->
     key = position.toString()
 
     if not @zones[key]
-      @zones[key] = zone = new Zone this, position, =>
+      @zones[key] = zone = new Zone this, position, ->
         cb(zone) if cb
 
   createChunk: (position) ->

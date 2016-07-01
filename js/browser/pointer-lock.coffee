@@ -6,13 +6,13 @@ class PointerLock
   constructor: (@element) ->
     requestPointerLock = @element.requestPointerLock
 
-    unless @element.requestPointerLock 
+    unless @element.requestPointerLock
       for vendor in ['moz', 'webkit', 'o', 'ms']
         @prefix = vendor if @element["#{vendor}RequestPointerLock"]
         requestPointerLock = requestPointerLock || @element["#{vendor}RequestPointerLock"]
 
     @capable = !!requestPointerLock
-  
+
   getPrefixedMethod: (method) =>
     prefixed = "#{@prefix}#{method}"
     prefixed[0].toLowerCase() + prefixed[1..-1]

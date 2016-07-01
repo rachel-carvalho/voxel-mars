@@ -7,14 +7,14 @@ mkdir out/css
 
 echo 'browserify > uglify > timestamp > js...'
 JS_TS=`stat -f "%Sm" -t "%Y%m%d%H%M%S" js/`
-browserify -t coffeeify js/index.coffee | uglifyjs > out/js/index.$JS_TS.js
+node_modules/.bin/browserify -t coffeeify js/index.coffee | node_modules/.bin/uglifyjs > out/js/index.$JS_TS.js
 
 echo 'stylus > timestamp > css...'
 CSS_TS=`stat -f "%Sm" -t "%Y%m%d%H%M%S" css/`
-stylus -c css/index.styl -p > out/css/index.$CSS_TS.css
+node_modules/.bin/stylus -c css/index.styl -p > out/css/index.$CSS_TS.css
 
-echo 'jade > html...'
-jade -p html/index.jade -O "{css: 'index.$CSS_TS.css', js: 'index.$JS_TS.js'}" < html/index.jade > out/index.html
+echo 'pug > html...'
+node_modules/.bin/pug -p html/index.pug -O "{css: 'index.$CSS_TS.css', js: 'index.$JS_TS.js'}" < html/index.pug > out/index.html
 
 echo "copying files to out/"
 cp -R static/ out/

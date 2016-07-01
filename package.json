@@ -13,15 +13,16 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "browserify": "13.0.0",
-    "browserify-middleware": "2.2.0",
-    "coffeeify": "0.5.1",
-    "express": "3.4.8",
-    "fs-extra": "0.8.1",
-    "jade": "1.11.0",
-    "pngjs": "2.2.0",
-    "stylus": "0.53.0",
-    "uglify-js": "2.6.1"
+    "browserify": "^13.0.1",
+    "browserify-middleware": "^7.0.0",
+    "coffeeify": "^2.0.1",
+    "express": "^4.14.0",
+    "fs-extra": "^0.30.0",
+    "pngjs": "^2.3.1",
+    "pug": "^2.0.0-beta3",
+    "pug-cli": "^1.0.0-alpha6",
+    "stylus": "^0.54.5",
+    "uglify-js": "^2.6.4"
   },
   "scripts": {
     "start": "coffee preview.coffee",
@@ -32,7 +33,7 @@
   },
   "engines": [
     {
-      "node": "5.4.1"
+      "node": "6.2.2"
     }
   ]
 }

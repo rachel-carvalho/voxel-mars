@@ -15,14 +15,15 @@ app.use '/js/index.js', browserify "#{__dirname}/js/index.coffee", transform: ['
 
 app.use '/css/index.css', (req, res) ->
   fs.readFile "#{__dirname}/css/index.styl", (err, content) ->
-    if err then res.send JSON.stringify err
-    else
-      stylus.render content.toString(), {paths: ["#{__dirname}/css"]}, (err, css) ->
-        if err then res.send err.message
-        else res.type 'css'; res.send css
+    return res.send(JSON.stringify err) if err
+
+    stylus.render content.toString(), paths: ["#{__dirname}/css"], (err, css) ->
+      return res.send(err.message) if err
+
+      res.type 'css'; res.send css
 
 app.get '/', (req, res) ->
-  res.render 'html/index.jade', {js: 'index.js', css: 'index.css'}
+  res.render 'html/index.pug', {js: 'index.js', css: 'index.css'}
 
 port = process.env.PORT || 3000
 app.listen port, -> console.log "Server started on port #{port}"

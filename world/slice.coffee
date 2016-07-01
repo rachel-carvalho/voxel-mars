@@ -10,8 +10,8 @@ log "using map info #{JSON.stringify map}"
 
 time = start: process.hrtime()
 
-inputMapPath = "./src/height"
-zoneDir = outputMapPath = "./out/height"
+inputMapPath = './src/height'
+zoneDir = outputMapPath = './out/height'
 
 log 'deleting current zone dir at ', zoneDir
 fse.removeSync zoneDir
@@ -56,7 +56,7 @@ readFile = (row, col) ->
   totalSize = (tileWidth * bytesPerPixel) * (tileHeight * bytesPerPixel)
   buffer = new Buffer totalSize
   fse.readSync fd, buffer, 0, totalSize, 0
-  
+
   createZone = (zx, zy) ->
     log 'creating zone png for X', zx, ', Y', zy
 
@@ -78,7 +78,7 @@ readFile = (row, col) ->
         scaled = (unsigned - min.value) / (max.value - min.value)
         # scaling down to 0 - 255
         hex = Math.round(scaled * maxColor)
-        
+
         # << = left shift operator
         idx = (zoneWidth * (y - start.y) + (x - start.x)) << 2
         # red channel only
@@ -90,7 +90,7 @@ readFile = (row, col) ->
     pngPath = "#{pngDir}/y#{zy}.png"
 
     fse.mkdirsSync pngDir
-    
+
     log 'writing png at ', pngPath
 
     wStream = fse.createWriteStream pngPath
@@ -123,4 +123,3 @@ readFile = (row, col) ->
   createZone col * zoneColsPerTile, row * zoneRowsPerTile
 
 readFile row, col
-

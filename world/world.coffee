@@ -8,16 +8,16 @@ module.exports =
   # in pixels / voxels
   width: 46080
   height: 22528
-  
+
   cols: 16 # 4 zones per .img
   rows: 8 # 2 zones per .img
 
   # origin of coordinates (lat 0, lng 0) in voxely coords
   origin: {x: 0, z: 22528 / 2}
-  
+
   # which elevation (in meters) is zero
   datum: 8208
-  
+
   # difference (in meters) between max and min elevation in map
   # highest point: olympus mons at 21249m, lowest: hellas planitia at -8208m
   heightSpan: 29457

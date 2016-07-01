@@ -10,7 +10,7 @@ class Coords
     this
 
   parse: (input) -> @set(input.split(',')); this
- 
+
   setType: (@type) ->
     if @type is 'latlng' then [@a, @b] = ['lat', 'lng']
     else [@a, @b] = ['x', 'z']
@@ -24,7 +24,7 @@ class Coords
     this[@b] = Math.floor(this[@b] * factor)
 
     this
-  
+
   divide: (factor) ->
     this[@a] = Math.floor(this[@a] / factor)
     this[@b] = Math.floor(this[@b] / factor)
@@ -62,7 +62,7 @@ class Coords
     voxely.setType('zoney')
   toLatLng: ->
     voxely = @toVoxely()
-    
+
     lat = -((voxely.z - @world.origin.z) / @world.pixelsPerDegree)
     lng = voxely.x / @world.pixelsPerDegree
     lng -= 360 if lng > 180

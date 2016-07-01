@@ -54,5 +54,5 @@ class Collection extends Array
   toggle: -> el.toggle() for el in this; this
   on: (obj) -> el.on(obj) for el in this; this
   click: (cb) -> el.click(cb) for el in this; this
-    
+
 module.exports = $
