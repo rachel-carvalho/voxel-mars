@@ -7,16 +7,16 @@
  */
 
 // Using:
-// 
+//
 // FlyingControls = require './three/flying-controls.js'
 // @controls = new FlyingControls(THREE, camera, container)
 // @controls.movementSpeed = 1000
 // @controls.lookSpeed = 0.125
-// 
+//
 // @controls.handleResize()
 // @controls.update(@clock.getDelta())
 
-var THREE = require('./three-r65.js');
+var THREE = require('three');
 
 module.exports = function (object, domElement ) {
 

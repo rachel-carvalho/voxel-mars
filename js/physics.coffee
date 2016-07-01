@@ -1,4 +1,4 @@
-THREE = require './three/three-r65.js'
+THREE = require 'three'
 
 class Physics
   constructor: (params) ->

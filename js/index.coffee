@@ -1,8 +1,8 @@
 window.log = log = -> console.log.apply console, arguments
 
 $ = require './browser/yocto.coffee'
-THREE = require './three/three-r65.js'
-Stats = require './three/stats-r11.js'
+THREE = require 'three'
+Stats = require 'stats.js'
 RendererStats = require './three/renderer-stats.js'
 
 Clock = require './clock.coffee'
@@ -141,7 +141,7 @@ class Game
 
   createStats: (container) ->
     stats = new Stats()
-    stats.domElement.style.position = 'absolute'
+    stats.domElement.style.top = 'auto'
     stats.domElement.style.bottom = '0px'
     stats.domElement.classList.add 'debug'
     container.el.appendChild stats.domElement
